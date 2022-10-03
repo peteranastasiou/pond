@@ -1,12 +1,26 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
+#include <vector>
 
-enum class OpCode {
+namespace OpCode {
+enum {
     RETURN,
 };
+}
 
-struct Chunk {
-    uint8_t * code;
+class Chunk {
+public:
+    Chunk();
+    ~Chunk();
+    void write(uint8_t byte);
+    int count();
+
+private:
+    std::vector<uint8_t> code;
+
+    // Disassembler needs access within the chunk:
+    friend int disassembleInstruction(Chunk * chunk, int offset);
 };
 
