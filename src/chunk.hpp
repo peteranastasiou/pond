@@ -1,11 +1,14 @@
 #pragma once
 
+#include "value.hpp"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <vector>
 
 namespace OpCode {
 enum {
+    CONSTANT,       // Load a constant (literal) from the chunk
     RETURN,
 };
 }
@@ -15,12 +18,14 @@ public:
     Chunk();
     ~Chunk();
     void write(uint8_t byte);
+    uint8_t addConstant(Value value);
     int count();
 
 private:
     std::vector<uint8_t> code;
+    std::vector<Value> constants;
 
     // Disassembler needs access within the chunk:
-    friend int disassembleInstruction(Chunk * chunk, int offset);
+    friend class Dissassembler;
 };
 
