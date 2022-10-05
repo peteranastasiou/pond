@@ -19,6 +19,13 @@ void Dissassembler::disassembleChunk(Chunk * chunk, char const * name){
 
 int Dissassembler::disassembleInstruction(Chunk * chunk, int offset){
   printf("%04i ", offset);
+  if( offset > 0 && chunk->lines[offset] == chunk->lines[offset - 1]){
+    // same line:
+    printf("   | ");
+  }else{
+    // new line:
+    printf("%4d ", chunk->lines[offset]);
+  }
 
   uint8_t instr = chunk->code[(size_t)offset];
   switch(instr){

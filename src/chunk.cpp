@@ -13,12 +13,13 @@ Chunk::Chunk() {
 Chunk::~Chunk() {
 }
 
-void Chunk::write(uint8_t byte) {
+void Chunk::write(uint8_t byte, int line) {
     if( code.size() >= MAX_COUNT_ ){
         // TODO fatal error
         exit(1);
     }
     code.push_back(byte);
+    lines.push_back(line);   // TODO run-length encoding
 }
 
 uint8_t Chunk::addConstant(Value value) {
