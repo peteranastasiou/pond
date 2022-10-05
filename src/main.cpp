@@ -15,8 +15,8 @@ int main(int argc, char const * argv[]) {
     chunk.write(constantIdx, 123);
     chunk.write(OpCode::RETURN, 124);
 
-    Dissassembler ds;
-    ds.disassembleChunk(&chunk, "test chunk");
+    // Dissassembler ds;
+    // ds.disassembleChunk(&chunk, "test chunk");
 
     vm.interpret(&chunk);
 

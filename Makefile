@@ -6,6 +6,9 @@ CC = g++
 # Whether to build for debugging instead of release
 DEBUG = 0
 
+# Whether to enable verbose execution trace debugging
+DEBUG_TRACE_EXECUTION = 1
+
 # Compilation flags
 CFLAGS = -W -Wall -Wextra -Werror -Wno-unused -Wconversion -MMD -MP -fno-exceptions
 ifeq ($(DEBUG), 1)
@@ -37,6 +40,12 @@ else
 	RMDIR = rm -rf
 endif
 
+# Defines
+DEFINES = 
+ifeq ($(DEBUG_TRACE_EXECUTION), 1)
+	DEFINES += -DDEBUG_TRACE_EXECUTION
+endif
+
 all: $(TARGET)
 
 # Link
@@ -47,7 +56,7 @@ $(TARGET): $(OBJECTS)
 # Compile sources
 build/%.o: src/%.cpp
 	@$(MKDIR_BUILD)
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) $(CFLAGS) $(DEFINES) -c $< -o $@
 
 .PHONY: clean
 

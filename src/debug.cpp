@@ -31,7 +31,7 @@ void Dissassembler::disassembleChunk(Chunk * chunk, char const * name){
 
 int Dissassembler::disassembleInstruction(Chunk * chunk, int offset){
   // TODO decypher the line number
-  exit(0);
+  return disassembleInstruction_(chunk, offset, 0);
 }
 
 int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
