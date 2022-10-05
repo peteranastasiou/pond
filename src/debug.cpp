@@ -2,6 +2,8 @@
 #include "debug.hpp"
 
 #include <stdio.h>
+#include <stdlib.h>
+
 
 Dissassembler::Dissassembler(){
 }
@@ -12,20 +14,29 @@ Dissassembler::~Dissassembler(){
 void Dissassembler::disassembleChunk(Chunk * chunk, char const * name){
   printf("== %s ==\n", name);
 
+  // first line number
+  int lineIdx = 0;
+  int lineInstrCount = chunk->lines[lineIdx].count; // number of bytecode bytes per line
+
   for (int offset = 0; offset < chunk->count();) {
-    offset = disassembleInstruction(chunk, offset);
+    int incr = disassembleInstruction_(chunk, offset, chunk->lines[lineIdx].line);
+    offset += incr;
+    if( lineInstrCount -= incr <= 0 ){
+      // new line:
+      lineIdx ++;
+      lineInstrCount = chunk->lines[lineIdx].count;
+    }
   }
 }
 
 int Dissassembler::disassembleInstruction(Chunk * chunk, int offset){
+  // TODO decypher the line number
+  exit(0);
+}
+
+int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
   printf("%04i ", offset);
-  if( offset > 0 && chunk->lines[offset] == chunk->lines[offset - 1]){
-    // same line:
-    printf("   | ");
-  }else{
-    // new line:
-    printf("%4d ", chunk->lines[offset]);
-  }
+  printf("%4d ", line);
 
   uint8_t instr = chunk->code[(size_t)offset];
   switch(instr){
@@ -37,7 +48,7 @@ int Dissassembler::disassembleInstruction(Chunk * chunk, int offset){
 
     default:
       printf("Unknown opcode %i\n", instr);
-      return offset + 1;
+      return 1;
   }
 }
 
@@ -46,10 +57,10 @@ int Dissassembler::constantInstruction_(char const * name, Chunk * chunk, int of
   printf("%-16s %4d '", name, constantIdx);
   printValue(chunk->constants[constantIdx]);
   printf("'\n");
-  return offset + 2;
+  return 2;
 }
 
 int Dissassembler::simpleInstruction_(char const * name, int offset){
   printf("%s\n", name);
-  return offset + 1;
+  return 1;
 }

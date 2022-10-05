@@ -13,13 +13,30 @@ Chunk::Chunk() {
 Chunk::~Chunk() {
 }
 
-void Chunk::write(uint8_t byte, int line) {
+void Chunk::write(uint8_t byte, uint16_t line) {
     if( code.size() >= MAX_COUNT_ ){
         // TODO fatal error
         exit(1);
     }
     code.push_back(byte);
-    lines.push_back(line);   // TODO run-length encoding
+    
+    if( lines.size() == 0
+        || lines.back().line != line
+        || lines.back().count == 0xFF ){    // TODO test > 256 bytecode bytes on 1 line
+        // new line
+        lines.push_back({line, 1});
+    }else{
+        // same line
+        lines.back().count ++;
+    }
+}
+
+int Chunk::count() {
+    return (int)code.size();
+}
+
+uint8_t * Chunk::getCode() {
+    return &code[0];
 }
 
 uint8_t Chunk::addConstant(Value value) {
@@ -32,6 +49,6 @@ uint8_t Chunk::addConstant(Value value) {
     return (uint8_t)size; // index of new constant
 }
 
-int Chunk::count() {
-    return (int)code.size();
+Value Chunk::getConstant(uint8_t index) {
+    return constants[index];
 }

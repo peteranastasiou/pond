@@ -1,9 +1,13 @@
 
+#include "vm.hpp"
 #include "chunk.hpp"
 #include "debug.hpp"
 
+#include <stdio.h>
+
 
 int main(int argc, char const * argv[]) {
+    Vm vm;
     Chunk chunk;
 
     uint8_t constantIdx = chunk.addConstant(1.2);
@@ -13,5 +17,8 @@ int main(int argc, char const * argv[]) {
 
     Dissassembler ds;
     ds.disassembleChunk(&chunk, "test chunk");
+
+    vm.interpret(&chunk);
+
     return 0;
 }
