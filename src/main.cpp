@@ -13,6 +13,7 @@ int main(int argc, char const * argv[]) {
     uint8_t constantIdx = chunk.addConstant(1.2);
     chunk.write(OpCode::CONSTANT, 123);
     chunk.write(constantIdx, 123);
+    chunk.write(OpCode::NEGATE, 123);
     chunk.write(OpCode::RETURN, 124);
 
     // Dissassembler ds;

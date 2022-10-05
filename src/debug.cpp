@@ -43,6 +43,9 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
     case OpCode::CONSTANT:
       return constantInstruction_("CONSTANT", chunk, offset);
 
+    case OpCode::NEGATE:
+      return simpleInstruction_("NEGATE", offset);
+
     case OpCode::RETURN:
       return simpleInstruction_("RETURN", offset);
 
