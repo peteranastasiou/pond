@@ -25,6 +25,7 @@ private:
     InterpretResult run_();
     inline uint8_t readByte_() { return *ip_++; }
     inline void resetStack_() { stackTop_ = stack_; }
+    void binaryOp_(uint8_t op);
 
     static int const STACK_MAX = 256;
 

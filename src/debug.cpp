@@ -43,11 +43,23 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
     case OpCode::CONSTANT:
       return constantInstruction_("CONSTANT", chunk, offset);
 
+    case OpCode::ADD:
+      return simpleInstruction_("ADD");
+
+    case OpCode::SUBTRACT:
+      return simpleInstruction_("SUBTRACT");
+
+    case OpCode::MULTIPLY:
+      return simpleInstruction_("MULTIPLY");
+
+    case OpCode::DIVIDE:
+      return simpleInstruction_("DIVIDE");
+
     case OpCode::NEGATE:
-      return simpleInstruction_("NEGATE", offset);
+      return simpleInstruction_("NEGATE");
 
     case OpCode::RETURN:
-      return simpleInstruction_("RETURN", offset);
+      return simpleInstruction_("RETURN");
 
     default:
       printf("Unknown opcode %i\n", instr);
@@ -63,7 +75,7 @@ int Dissassembler::constantInstruction_(char const * name, Chunk * chunk, int of
   return 2;
 }
 
-int Dissassembler::simpleInstruction_(char const * name, int offset){
+int Dissassembler::simpleInstruction_(char const * name){
   printf("%s\n", name);
   return 1;
 }

@@ -26,7 +26,30 @@ void Vm::push(Value value) {
 
 Value Vm::pop() {
     stackTop_--;
+    if( stackTop_ == stack_-1 ){
+        printf("Fatal: pop empty stack\n");
+        exit(1);  // todo error handling
+    }
     return *stackTop_;
+}
+
+void Vm::binaryOp_(uint8_t op){
+    Value b = pop();
+    Value a = pop();
+    switch( op ){
+        case OpCode::ADD:
+            push(a + b);
+            break;
+        case OpCode::SUBTRACT:
+            push(a - b);
+            break;
+        case OpCode::MULTIPLY:
+            push(a * b);
+            break;
+        case OpCode::DIVIDE:
+            push(a / b);
+            break;
+    }
 }
 
 InterpretResult Vm::run_() {
@@ -44,11 +67,19 @@ InterpretResult Vm::run_() {
             printf(" ]");
         }
         printf("\n");
+
         disasm.disassembleInstruction(chunk_, (int)(ip_ - chunk_->getCode()));
 #endif
 
         uint8_t instr = readByte_();
         switch( instr ){
+            case OpCode::ADD:
+            case OpCode::SUBTRACT:
+            case OpCode::MULTIPLY:
+            case OpCode::DIVIDE:{
+                binaryOp_(instr);
+                break;
+            }
             case OpCode::NEGATE:{
                 push(-pop());
                 break;

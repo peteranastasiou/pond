@@ -9,6 +9,10 @@
 namespace OpCode {
 enum {
     CONSTANT,       // Load a constant (literal) from the chunk
+    ADD,
+    SUBTRACT,
+    MULTIPLY,
+    DIVIDE,
     NEGATE,         // unary negative
     RETURN,
 };

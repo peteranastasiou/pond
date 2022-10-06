@@ -17,5 +17,5 @@ public:
 private:
     int disassembleInstruction_(Chunk * chunk, int offset, int line);
     int constantInstruction_(char const * name, Chunk * chunk, int offset);
-    int simpleInstruction_(char const * name, int offset);
+    int simpleInstruction_(char const * name);
 };
