@@ -15,7 +15,7 @@ public:
     
     ~Vm();
 
-    InterpretResult interpret(Chunk * chunk);
+    InterpretResult interpret(char const * source);
 
     // stack operations:
     void push(Value value);

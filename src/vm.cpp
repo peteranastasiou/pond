@@ -1,6 +1,7 @@
 
 #include "vm.hpp"
 #include "debug.hpp"
+#include "compiler.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,10 +14,12 @@ Vm::Vm() {
 Vm::~Vm() {
 }
 
-InterpretResult Vm::interpret(Chunk * chunk) {
-    chunk_= chunk;
-    ip_ = chunk_->getCode();
-    return run_();
+InterpretResult Vm::interpret(char const * source) {
+    compile(source);
+    return InterpretResult::OK;
+    // chunk_= chunk;
+    // ip_ = chunk_->getCode();
+    // return run_();
 }
 
 void Vm::push(Value value) {
