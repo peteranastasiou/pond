@@ -21,4 +21,5 @@ private:
     int simpleInstruction_(char const * name);
 };
 
+void debugScanner(char const * source);
 char const * tokenTypeToStr(Token::Type t);

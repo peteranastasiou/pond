@@ -15,11 +15,14 @@ Vm::~Vm() {
 }
 
 InterpretResult Vm::interpret(char const * source) {
-    compile(source);
-    return InterpretResult::OK;
-    // chunk_= chunk;
-    // ip_ = chunk_->getCode();
-    // return run_();
+    Compiler compiler;
+    Chunk chunk;
+    if( !compiler.compile(source, chunk) ){
+        return InterpretResult::COMPILE_ERR;
+    }
+    chunk_= &chunk;
+    ip_ = chunk_->getCode();
+    return run_();
 }
 
 void Vm::push(Value value) {

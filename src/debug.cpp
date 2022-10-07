@@ -80,6 +80,26 @@ int Dissassembler::simpleInstruction_(char const * name){
   return 1;
 }
 
+void debugScanner(char const * source) {
+    Scanner scanner;
+    scanner.init(source);
+    int line = -1;
+    for(;;){
+        Token token = scanner.scanToken();
+        if( token.line != line ){
+            printf("%4d ", token.line);
+            line = token.line;
+        }else{
+            printf("   | ");
+        }
+        printf("%s '%.*s'\n", tokenTypeToStr(token.type), token.length, token.start); 
+
+        if( token.type == Token::END ){
+            break;
+        }
+    }
+}
+
 char const * tokenTypeToStr(Token::Type t) {
   switch(t) {           
       case Token::LEFT_PAREN:     return "LEFT_PAREN";

@@ -3,13 +3,16 @@
 
 #include "string.h"
 
-Scanner::Scanner(char const * source) {
-    start_ = source;
-    current_ = source;
-    line_ = 1;
+Scanner::Scanner() {
 }
 
 Scanner::~Scanner() {
+}
+
+void Scanner::init(char const * source) {
+    start_ = source;
+    current_ = source;
+    line_ = 1;
 }
 
 void Scanner::skipWhitespace_() {

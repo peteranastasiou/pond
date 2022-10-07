@@ -31,10 +31,12 @@ struct Token {
 
 class Scanner {
 public:
-    Scanner(char const * source);
+    Scanner();
     
     ~Scanner();
 
+    void init(char const * source);
+    
     Token scanToken();
 
 private:
