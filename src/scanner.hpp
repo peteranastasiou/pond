@@ -15,9 +15,9 @@ struct Token {
         // Literals:
         IDENTIFIER, STRING, NUMBER,
         // Keywords:
-        AND, CLASS, ELSE, FALSE,
-        FOR, FUN, IF, NIL, OR,
-        PRINT, RETURN, SUPER, THIS,
+        AND, ELSE, FALSE,
+        FOR, FN, IF, NIL, OR,
+        PRINT, RETURN,
         TRUE, VAR, WHILE,
         // Special tokens:
         ERROR, END
@@ -55,6 +55,8 @@ private:
     Token makeStringToken_();
     Token makeNumberToken_();
     Token makeIdentifierToken_();
+    Token::Type identifierType_();
+    Token::Type checkKeyword_(int offset, int len, char const * rest, Token::Type type);
     
     void skipWhitespace_();
 
