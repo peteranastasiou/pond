@@ -1,6 +1,7 @@
 
 #include "compiler.hpp"
 #include "scanner.hpp"
+#include "debug.hpp"
 
 #include <stdio.h>
 
@@ -16,7 +17,7 @@ void compile(char const * source) {
         }else{
             printf("   | ");
         }
-        printf("%2d '%.*s'\n", token.type, token.length, token.start); 
+        printf("%s '%.*s'\n", tokenTypeToStr(token.type), token.length, token.start); 
 
         if( token.type == Token::END ){
             break;

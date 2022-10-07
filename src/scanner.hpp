@@ -13,7 +13,7 @@ struct Token {
         GREATER, GREATER_EQUAL,
         LESS, LESS_EQUAL,
         // Literals:
-        IDENTIFIER, STRING, NUMBER,
+        IDENTIFIER, STRING, NUMBER,   // TODO int
         // Keywords:
         AND, ELSE, FALSE,
         FOR, FN, IF, NIL, OR,

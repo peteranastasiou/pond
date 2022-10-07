@@ -1,6 +1,7 @@
 #pragma once
 
 #include "chunk.hpp"
+#include "scanner.hpp"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -19,3 +20,5 @@ private:
     int constantInstruction_(char const * name, Chunk * chunk, int offset);
     int simpleInstruction_(char const * name);
 };
+
+char const * tokenTypeToStr(Token::Type t);

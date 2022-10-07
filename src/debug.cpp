@@ -79,3 +79,46 @@ int Dissassembler::simpleInstruction_(char const * name){
   printf("%s\n", name);
   return 1;
 }
+
+char const * tokenTypeToStr(Token::Type t) {
+  switch(t) {           
+      case Token::LEFT_PAREN:     return "LEFT_PAREN";
+      case Token::RIGHT_PAREN:    return "RIGHT_PAREN";
+      case Token::LEFT_BRACE:     return "LEFT_BRACE";
+      case Token::RIGHT_BRACE:    return "RIGHT_BRACE";
+      case Token::COMMA:          return "COMMA";
+      case Token::DOT:            return "DOT";
+      case Token::MINUS:          return "MINUS";
+      case Token::PLUS:           return "PLUS";
+      case Token::SEMICOLON:      return "SEMICOLON";
+      case Token::SLASH:          return "SLASH";
+      case Token::STAR:           return "STAR";
+      case Token::BANG:           return "BANG";
+      case Token::BANG_EQUAL:     return "BANG_EQUAL";
+      case Token::EQUAL:          return "EQUAL";
+      case Token::EQUAL_EQUAL:    return "EQUAL_EQUAL";
+      case Token::GREATER:        return "GREATER";
+      case Token::GREATER_EQUAL:  return "GREATER_EQUAL";
+      case Token::LESS:           return "LESS";
+      case Token::LESS_EQUAL:     return "LESS_EQUAL";
+      case Token::IDENTIFIER:     return "IDENTIFIER";
+      case Token::STRING:         return "STRING";
+      case Token::NUMBER:         return "NUMBER";
+      case Token::AND:            return "AND";
+      case Token::ELSE:           return "ELSE";
+      case Token::FALSE:          return "FALSE";
+      case Token::FOR:            return "FOR";
+      case Token::FN:             return "FN";
+      case Token::IF:             return "IF";
+      case Token::NIL:            return "NIL";
+      case Token::OR:             return "OR";
+      case Token::PRINT:          return "PRINT";
+      case Token::RETURN:         return "RETURN";
+      case Token::TRUE:           return "TRUE";
+      case Token::VAR:            return "VAR";
+      case Token::WHILE:          return "WHILE";
+      case Token::ERROR:          return "ERROR";
+      case Token::END:            return "END";
+      default:                    return "UNIDENTIFIED";
+  }
+}

@@ -99,6 +99,7 @@ Token::Type Scanner::identifierType_() {
                     case 'n': return Token::FN;
                 }
             }
+            break;
         }
         case 'e': return checkKeyword_(1, 3, "lse", Token::ELSE);
         case 'i': return checkKeyword_(1, 1, "f", Token::IF);
@@ -150,14 +151,24 @@ Token Scanner::makeNumberToken_() {
 }
 
 Token Scanner::scanToken() {
+    // first, gobble up whitespace and comments:
+    skipWhitespace_();
+
+    // reset pointer to the start of identifier/keyword:
     start_ = current_;
 
     // check for EOF:
     if( isAtEnd_() ) return makeToken_(Token::END);
 
     char c = advance_();
+
+    // check for indentifier/keyword:
     if( isAlpha_(c) ) return makeIdentifierToken_();
+
+    // check for number:
     if( isDigit_(c) ) return makeNumberToken_();
+
+    // check for symbol:
     switch (c) {
         case '(': return makeToken_(Token::LEFT_PAREN);
         case ')': return makeToken_(Token::RIGHT_PAREN);
