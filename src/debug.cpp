@@ -107,7 +107,6 @@ char const * tokenTypeToStr(Token::Type t) {
       case Token::LEFT_BRACE:     return "LEFT_BRACE";
       case Token::RIGHT_BRACE:    return "RIGHT_BRACE";
       case Token::COMMA:          return "COMMA";
-      case Token::DOT:            return "DOT";
       case Token::MINUS:          return "MINUS";
       case Token::PLUS:           return "PLUS";
       case Token::SEMICOLON:      return "SEMICOLON";
