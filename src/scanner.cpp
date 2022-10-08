@@ -15,11 +15,18 @@ void Scanner::init(char const * source) {
     line_ = 1;
 }
 
+void Scanner::incrementLine_() {
+    // clamp at maximum value
+    if( line_ < MAX_LINES ){
+        line_++;
+    }
+}
+
 void Scanner::skipWhitespace_() {
     for(;;){
         switch( peek_() ){
             case '\n':
-                line_++;
+                incrementLine_();
                 // Fall-through
             case ' ':
             case '\r':
@@ -53,7 +60,7 @@ Token Scanner::makeToken_(Token::Type type) {
   Token token;
   token.type = type;
   token.start = start_;
-  token.length = (int)(current_ - start_);
+  token.length = (uint16_t)(current_ - start_);
   token.line = line_;
   return token;
 }
@@ -62,7 +69,7 @@ Token Scanner::makeErrorToken_(const char* message) {
   Token token;
   token.type = Token::ERROR;
   token.start = message;
-  token.length = (int)strlen(message);
+  token.length = (uint16_t)strlen(message);
   token.line = line_;
   return token;
 }

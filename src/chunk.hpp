@@ -44,6 +44,8 @@ public:
     // Get a constant value by its index
     Value getConstant(uint8_t index);
 
+    static uint8_t const MAX_CONSTANTS = 255;  // constant index must fit in a byte (for now)
+
 private:
     std::vector<uint8_t> code;
     std::vector<LineNum> lines;         // line numbers corresponding to bytecode array

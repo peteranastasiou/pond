@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdint.h>
+
+
 struct Token {
     enum Type {
         // Single-character tokens:
@@ -25,8 +28,8 @@ struct Token {
 
     Type type;
     char const * start;
-    int length;
-    int line;
+    uint16_t length;
+    uint16_t line;
 };
 
 class Scanner {
@@ -39,6 +42,8 @@ public:
     
     Token scanToken();
 
+    static uint16_t const MAX_LINES = 0xFFFF;
+
 private:
     inline bool isAtEnd_(){ return *current_ == '\0'; }
     inline char peek_(){ return *current_; }
@@ -50,6 +55,8 @@ private:
                 c == '_';
     }
 
+    void incrementLine_();
+    void skipWhitespace_();
     bool matchNext_(char expected);
     
     Token makeToken_(Token::Type type);
@@ -60,9 +67,8 @@ private:
     Token::Type identifierType_();
     Token::Type checkKeyword_(int offset, int len, char const * rest, Token::Type type);
     
-    void skipWhitespace_();
 
     char const * start_;
     char const * current_;
-    int line_;
+    uint16_t line_;
 };

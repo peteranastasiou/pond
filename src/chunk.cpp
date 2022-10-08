@@ -5,7 +5,6 @@
 
 
 static int const MAX_COUNT_ = 65535;
-static int const MAX_CONSTANTS_ = 256;  // constant index must fit in a byte (for now)
 
 Chunk::Chunk() {
 }
@@ -41,12 +40,12 @@ uint8_t * Chunk::getCode() {
 
 uint8_t Chunk::addConstant(Value value) {
     int size = (int)constants.size();
-    if( size >= MAX_CONSTANTS_ ){
-        // TODO fatal error
-        exit(1);
+    if( size < MAX_CONSTANTS ){
+        constants.push_back(value);
+        return (uint8_t)size; // index of new constant
+    }else{
+        return MAX_CONSTANTS; // full!
     }
-    constants.push_back(value);
-    return (uint8_t)size; // index of new constant
 }
 
 Value Chunk::getConstant(uint8_t index) {
