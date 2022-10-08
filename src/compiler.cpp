@@ -91,6 +91,10 @@ uint8_t Compiler::makeConstant_(Value value) {
 }
 
 void Compiler::expression_() {
+    parse_(Precedence::ASSIGNMENT);
+}
+
+void Compiler::parse_(Precedence precedence) {
 
 }
 
@@ -99,11 +103,63 @@ void Compiler::grouping_() {
     consume_(Token::RIGHT_PAREN, "Expect ')' after expression");
 }
 
+void Compiler::unary_() {
+}
+
+void Compiler::binary_() {
+}
+
 void Compiler::number_() {
     // shouldn't fail as we already validated the token as a number:
     double value = strtod(previousToken_.start, nullptr);
     emitConstant_(value);
 }
+
+#define RULE(fn) [this](){ this->fn(); }
+
+ParseRule const * Compiler::getRule_(Token::Type type) {
+    static const ParseRule rules[] = {
+        // token type             prefix func      infix func     infix precedence
+        [Token::LEFT_PAREN]    = {RULE(grouping_), NULL,          Precedence::NONE},
+        [Token::RIGHT_PAREN]   = {NULL,            NULL,          Precedence::NONE},
+        [Token::LEFT_BRACE]    = {NULL,            NULL,          Precedence::NONE}, 
+        [Token::RIGHT_BRACE]   = {NULL,            NULL,          Precedence::NONE},
+        [Token::COMMA]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::MINUS]         = {RULE(unary_),    RULE(binary_), Precedence::TERM},
+        [Token::PLUS]          = {NULL,            RULE(binary_), Precedence::TERM},
+        [Token::SEMICOLON]     = {NULL,            NULL,          Precedence::NONE},
+        [Token::SLASH]         = {NULL,            RULE(binary_), Precedence::FACTOR},
+        [Token::STAR]          = {NULL,            RULE(binary_), Precedence::FACTOR},
+        [Token::BANG]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::BANG_EQUAL]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::EQUAL]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::EQUAL_EQUAL]   = {NULL,            NULL,          Precedence::NONE},
+        [Token::GREATER]       = {NULL,            NULL,          Precedence::NONE},
+        [Token::GREATER_EQUAL] = {NULL,            NULL,          Precedence::NONE},
+        [Token::LESS]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::LESS_EQUAL]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::IDENTIFIER]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::STRING]        = {NULL,            NULL,          Precedence::NONE},
+        [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
+        [Token::AND]           = {NULL,            NULL,          Precedence::NONE},
+        [Token::ELSE]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::FALSE]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::FOR]           = {NULL,            NULL,          Precedence::NONE},
+        [Token::FN]            = {NULL,            NULL,          Precedence::NONE},
+        [Token::IF]            = {NULL,            NULL,          Precedence::NONE},
+        [Token::NIL]           = {NULL,            NULL,          Precedence::NONE},
+        [Token::OR]            = {NULL,            NULL,          Precedence::NONE},
+        [Token::PRINT]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::RETURN]        = {NULL,            NULL,          Precedence::NONE},
+        [Token::TRUE]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::VAR]           = {NULL,            NULL,          Precedence::NONE},
+        [Token::WHILE]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::ERROR]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::END]           = {NULL,            NULL,          Precedence::NONE},
+    };
+    return &rules[type];
+}
+#undef RULE
 
 void Compiler::errorAtCurrent_(const char* message) {
     errorAt_(&currentToken_, message);

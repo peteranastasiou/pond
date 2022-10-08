@@ -10,7 +10,7 @@ DEBUG = 0
 DEBUG_TRACE_EXECUTION = 1
 
 # Compilation flags
-CFLAGS = -W -Wall -Wextra -Werror -Wno-unused -Wconversion -MMD -MP -fno-exceptions
+CFLAGS = -std=c++17 -W -Wall -Wextra -Werror -Wno-unused -Wconversion -MMD -MP -fno-exceptions
 ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUG -O0 -g
 else

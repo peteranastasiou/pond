@@ -2,6 +2,30 @@
 
 #include "chunk.hpp"
 #include "scanner.hpp"
+#include <functional>
+
+// Precedence order from lowest to highest:
+enum class Precedence {
+  NONE,
+  ASSIGNMENT,  // =
+  OR,          // or
+  AND,         // and
+  EQUALITY,    // == !=
+  COMPARISON,  // < > <= >=
+  TERM,        // + -
+  FACTOR,      // * /
+  UNARY,       // ! -
+  CALL,        // . ()
+  PRIMARY
+};
+
+// Parse rule to define how to parse each token:
+struct ParseRule {
+    std::function<void()> prefix;
+    std::function<void()> infix;
+    Precedence precedence;
+};
+
 
 class Compiler {
 public:
@@ -20,10 +44,14 @@ private:
     void advance_();
     void consume_(Token::Type type, const char* message);
     Chunk * currentChunk_();
+    ParseRule const * getRule_(Token::Type type);
 
     // parsing different types of things:
     void expression_();
+    void parse_(Precedence precedence);
     void number_();
+    void unary_();
+    void binary_();
     void grouping_();  // parentheses in expressions
 
     // bytecode helpers:
