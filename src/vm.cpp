@@ -52,14 +52,16 @@ bool Vm::binaryOp_(uint8_t op){
 
     double b = pop().as.number;
     double a = pop().as.number;
-    double c;
     switch( op ){
-        case OpCode::ADD:       c = a + b; break;
-        case OpCode::SUBTRACT:  c = a - b; break;
-        case OpCode::MULTIPLY:  c = a * b; break;
-        case OpCode::DIVIDE:    c = a / b; break;
+        case OpCode::GREATER:       push(Value::boolean( a > b )); break;
+        case OpCode::GREATER_EQUAL: push(Value::boolean( a >= b )); break;
+        case OpCode::LESS:          push(Value::boolean( a < b )); break;
+        case OpCode::LESS_EQUAL:    push(Value::boolean( a <= b )); break;
+        case OpCode::ADD:           push(Value::number( a + b )); break;
+        case OpCode::SUBTRACT:      push(Value::number( a - b )); break;
+        case OpCode::MULTIPLY:      push(Value::number( a * b )); break;
+        case OpCode::DIVIDE:        push(Value::number( a / b )); break;
     }
-    push(Value::number(c));
     return true;
 }
 
@@ -82,7 +84,7 @@ InterpretResult Vm::run_() {
         printf("stack: ");
         for( Value * slot = stack_; slot < stackTop_; slot++ ){
             printf("[ ");
-            printValue(*slot);
+            slot->print();
             printf(" ]");
         }
         printf("\n");
@@ -100,6 +102,18 @@ InterpretResult Vm::run_() {
             case OpCode::NIL: push(Value::nil()); break;
             case OpCode::TRUE: push(Value::boolean(true)); break;
             case OpCode::FALSE: push(Value::boolean(false)); break;
+            case OpCode::EQUAL: {
+                push(Value::boolean( pop().equals(pop()) ));
+                break;
+            }
+            case OpCode::NOT_EQUAL: {
+                push(Value::boolean( !pop().equals(pop()) ));
+                break;
+            }
+            case OpCode::GREATER:
+            case OpCode::GREATER_EQUAL:
+            case OpCode::LESS:
+            case OpCode::LESS_EQUAL:
             case OpCode::ADD:
             case OpCode::SUBTRACT:
             case OpCode::MULTIPLY:
@@ -119,9 +133,10 @@ InterpretResult Vm::run_() {
             }
             case OpCode::NOT:{
                 push(Value::boolean(!isTruthy_(pop())));
+                break;
             }
             case OpCode::RETURN:{
-                printValue(pop());
+                pop().print();
                 printf("\n");
                 return InterpretResult::OK;
             }

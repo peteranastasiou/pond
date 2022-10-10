@@ -67,6 +67,9 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
     case OpCode::NEGATE:
       return simpleInstruction_("NEGATE");
 
+    case OpCode::NOT:
+      return simpleInstruction_("NOT");
+
     case OpCode::RETURN:
       return simpleInstruction_("RETURN");
 
@@ -79,7 +82,7 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
 int Dissassembler::constantInstruction_(char const * name, Chunk * chunk, int offset){
   uint8_t constantIdx = chunk->code[offset + 1];
   printf("%-16s %4d '", name, constantIdx);
-  printValue(chunk->constants[constantIdx]);
+  chunk->constants[constantIdx].print();
   printf("'\n");
   return 2;
 }

@@ -18,6 +18,7 @@ struct Value {
     inline bool isNil() { return type == NIL; }
     inline bool isBoolean() { return type == BOOL; }
     inline bool isNumber() { return type == NUMBER; }
-};
 
-void printValue(Value value);
+    bool equals(Value other);
+    void print();
+};

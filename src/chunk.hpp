@@ -8,16 +8,26 @@
 
 namespace OpCode {
 enum {
+    // Literals:
     CONSTANT,       // Push a constant (literal) from the chunk
     NIL,            // Push nil to the stack
     TRUE,           // Push true to the stack
-    FALSE,          // Push false to the stack 
+    FALSE,          // Push false to the stack
+    // Binary operators: take two values from the stack and push one:
+    EQUAL,
+    NOT_EQUAL,
+    GREATER,
+    GREATER_EQUAL,
+    LESS,
+    LESS_EQUAL,
     ADD,
     SUBTRACT,
     MULTIPLY,
     DIVIDE,
+    // Unary operators: take one value, push one value:
     NEGATE,
     NOT,
+    // Control flow:
     RETURN,
 };
 }

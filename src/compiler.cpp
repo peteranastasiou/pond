@@ -167,10 +167,16 @@ void Compiler::binary_() {
 
     // now both operand values will end up on the stack. combine them:
     switch( operatorType ){
-        case Token::PLUS:   emitByte_(OpCode::ADD); break;
-        case Token::MINUS:  emitByte_(OpCode::SUBTRACT); break;
-        case Token::STAR:   emitByte_(OpCode::MULTIPLY); break;
-        case Token::SLASH:  emitByte_(OpCode::DIVIDE); break;
+        case Token::BANG_EQUAL:    emitByte_(OpCode::NOT_EQUAL); break;
+        case Token::EQUAL_EQUAL:   emitByte_(OpCode::EQUAL); break;
+        case Token::GREATER:       emitByte_(OpCode::GREATER); break;
+        case Token::GREATER_EQUAL: emitByte_(OpCode::GREATER_EQUAL); break;
+        case Token::LESS:          emitByte_(OpCode::LESS); break;
+        case Token::LESS_EQUAL:    emitByte_(OpCode::LESS_EQUAL); break;
+        case Token::PLUS:          emitByte_(OpCode::ADD); break;
+        case Token::MINUS:         emitByte_(OpCode::SUBTRACT); break;
+        case Token::STAR:          emitByte_(OpCode::MULTIPLY); break;
+        case Token::SLASH:         emitByte_(OpCode::DIVIDE); break;
         default: break;
     }
 }
@@ -197,13 +203,13 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::SLASH]         = {NULL,            RULE(binary_), Precedence::FACTOR},
         [Token::STAR]          = {NULL,            RULE(binary_), Precedence::FACTOR},
         [Token::BANG]          = {RULE(unary_),    NULL,          Precedence::NONE},
-        [Token::BANG_EQUAL]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::BANG_EQUAL]    = {NULL,            RULE(binary_), Precedence::EQUALITY},
         [Token::EQUAL]         = {NULL,            NULL,          Precedence::NONE},
-        [Token::EQUAL_EQUAL]   = {NULL,            NULL,          Precedence::NONE},
-        [Token::GREATER]       = {NULL,            NULL,          Precedence::NONE},
-        [Token::GREATER_EQUAL] = {NULL,            NULL,          Precedence::NONE},
-        [Token::LESS]          = {NULL,            NULL,          Precedence::NONE},
-        [Token::LESS_EQUAL]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::EQUAL_EQUAL]   = {NULL,            RULE(binary_), Precedence::EQUALITY},
+        [Token::GREATER]       = {NULL,            RULE(binary_), Precedence::COMPARISON},
+        [Token::GREATER_EQUAL] = {NULL,            RULE(binary_), Precedence::COMPARISON},
+        [Token::LESS]          = {NULL,            RULE(binary_), Precedence::COMPARISON},
+        [Token::LESS_EQUAL]    = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::IDENTIFIER]    = {NULL,            NULL,          Precedence::NONE},
         [Token::STRING]        = {NULL,            NULL,          Precedence::NONE},
         [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
