@@ -7,10 +7,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <iostream>
+
 
 static void repl() {
     Vm vm;
-    // TODO
+    
+    for(;;){
+        std::cout << "> ";
+        std::string str;
+        std::getline(std::cin, str);
+
+        if( str == "exit" ){
+            return;
+        }
+
+        vm.interpret(str.c_str());
+    }
 }
 
 static char* readFile(const char* path) {

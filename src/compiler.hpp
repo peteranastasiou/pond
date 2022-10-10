@@ -48,7 +48,7 @@ private:
 
     // parsing different types of things:
     void expression_();
-    void parse_(Precedence precedence);
+    void parse_(Precedence precedence);  // parse everything with >= precendence
     void number_();
     void unary_();
     void binary_();
@@ -56,6 +56,7 @@ private:
 
     // bytecode helpers:
     void emitByte_(uint8_t byte);
+    void emitByteAtLine_(uint8_t byte, uint16_t line);
     inline void emitBytes_(uint8_t b1, uint8_t b2){ emitByte_(b1); emitByte_(b2); }
     void endCompilation_();
     void emitReturn_();

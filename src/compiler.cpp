@@ -66,7 +66,11 @@ Chunk * Compiler::currentChunk_() {
 }
 
 void Compiler::emitByte_(uint8_t byte) {
-    currentChunk_()->write(byte, previousToken_.line);
+    emitByteAtLine_(byte, previousToken_.line);
+}
+
+void Compiler::emitByteAtLine_(uint8_t byte, uint16_t line) {
+    currentChunk_()->write(byte, line);
 }
 
 void Compiler::endCompilation_() {
@@ -95,7 +99,23 @@ void Compiler::expression_() {
 }
 
 void Compiler::parse_(Precedence precedence) {
+    // Next token
+    advance_();
 
+    // Perform prefix rule of the token first:
+    auto prefixRule = getRule_(previousToken_.type)->prefix;
+    if( prefixRule == NULL ){
+        errorAtPrevious_("Expect expression");
+        return;
+    }
+    prefixRule();
+
+    // Perforce infix rules on tokens from left to right:
+    while( getRule_(currentToken_.type)->precedence >= precedence ){
+        advance_();
+        // call the rule for the same token (now previous)
+        getRule_(previousToken_.type)->infix();  // Can't be NULL as Precedence > NONE (refer getRule_ table)
+    }
 }
 
 void Compiler::grouping_() {
@@ -104,9 +124,38 @@ void Compiler::grouping_() {
 }
 
 void Compiler::unary_() {
+    Token::Type operatorType = previousToken_.type;
+    uint16_t line = previousToken_.line;
+    
+    // Compile the operand evaluation first:
+    expression_();
+
+    // Result of the operand gets negated:
+    switch( operatorType ){
+        case Token::MINUS: emitByteAtLine_(OpCode::NEGATE, line); break;
+        // TODO other unary operators
+        default: break;
+    }
 }
 
 void Compiler::binary_() {
+    // infix operator just got consumed, next token is the start of the second operand
+    // the first operand is already compiled and will end up on the stack first
+    Token::Type operatorType = previousToken_.type;
+    ParseRule const * rule = getRule_(operatorType);
+
+    // parse the second operand, and stop when the precendence is equal or lower
+    // stopping when precedence is equal causes math to be left associative: 1+2+3 = (1+2)+3
+    parse_((Precedence)((int)rule->precedence + 1));
+
+    // now both operand values will end up on the stack. combine them:
+    switch( operatorType ){
+        case Token::PLUS:   emitByte_(OpCode::ADD); break;
+        case Token::MINUS:  emitByte_(OpCode::SUBTRACT); break;
+        case Token::STAR:   emitByte_(OpCode::MULTIPLY); break;
+        case Token::SLASH:  emitByte_(OpCode::DIVIDE); break;
+        default: break;
+    }
 }
 
 void Compiler::number_() {
