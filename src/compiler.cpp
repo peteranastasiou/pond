@@ -149,8 +149,8 @@ void Compiler::unary_() {
 
     // Result of the operand gets negated:
     switch( operatorType ){
+        case Token::BANG:  emitByteAtLine_(OpCode::NOT, line); break;
         case Token::MINUS: emitByteAtLine_(OpCode::NEGATE, line); break;
-        // TODO other unary operators
         default: break;
     }
 }
@@ -196,7 +196,7 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::SEMICOLON]     = {NULL,            NULL,          Precedence::NONE},
         [Token::SLASH]         = {NULL,            RULE(binary_), Precedence::FACTOR},
         [Token::STAR]          = {NULL,            RULE(binary_), Precedence::FACTOR},
-        [Token::BANG]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::BANG]          = {RULE(unary_),    NULL,          Precedence::NONE},
         [Token::BANG_EQUAL]    = {NULL,            NULL,          Precedence::NONE},
         [Token::EQUAL]         = {NULL,            NULL,          Precedence::NONE},
         [Token::EQUAL_EQUAL]   = {NULL,            NULL,          Precedence::NONE},

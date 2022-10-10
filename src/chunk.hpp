@@ -17,6 +17,7 @@ enum {
     MULTIPLY,
     DIVIDE,
     NEGATE,
+    NOT,
     RETURN,
 };
 }

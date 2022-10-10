@@ -63,6 +63,14 @@ bool Vm::binaryOp_(uint8_t op){
     return true;
 }
 
+bool Vm::isTruthy_(Value value) {
+    switch( value.type ){
+        case Value::NIL:  return false;
+        case Value::BOOL: return value.as.boolean;
+        default:          return true;  // All other types are true!
+    }
+}
+
 InterpretResult Vm::run_() {
 #ifdef DEBUG_TRACE_EXECUTION
       Dissassembler disasm;  
@@ -84,6 +92,11 @@ InterpretResult Vm::run_() {
 
         uint8_t instr = readByte_();
         switch( instr ){
+            case OpCode::CONSTANT:{
+                Value constant = chunk_->getConstant(readByte_());
+                push(constant);
+                break;
+            }
             case OpCode::NIL: push(Value::nil()); break;
             case OpCode::TRUE: push(Value::boolean(true)); break;
             case OpCode::FALSE: push(Value::boolean(false)); break;
@@ -104,15 +117,13 @@ InterpretResult Vm::run_() {
                 push( Value::number(-pop().as.number) );
                 break;
             }
+            case OpCode::NOT:{
+                push(Value::boolean(!isTruthy_(pop())));
+            }
             case OpCode::RETURN:{
                 printValue(pop());
                 printf("\n");
                 return InterpretResult::OK;
-            }
-            case OpCode::CONSTANT:{
-                Value constant = chunk_->getConstant(readByte_());
-                push(constant);
-                break;
             }
             default:{
                 printf("Fatal error: unknown opcode %d\n", (int)instr);
