@@ -92,12 +92,16 @@ void debugScanner(char const * source) {
         }else{
             printf("   | ");
         }
-        printf("%s '%.*s'\n", tokenTypeToStr(token.type), token.length, token.start); 
-
+        printToken(token);
+        printf("\n");
         if( token.type == Token::END ){
             break;
         }
     }
+}
+
+void printToken(Token token) {
+  printf("%s '%.*s'", tokenTypeToStr(token.type), token.length, token.start); 
 }
 
 char const * tokenTypeToStr(Token::Type t) {

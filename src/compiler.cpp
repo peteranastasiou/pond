@@ -7,11 +7,9 @@
 
 
 Compiler::Compiler() {
-
 }
 
 Compiler::~Compiler() {
-
 }
 
 bool Compiler::compile(char const * source, Chunk & chunk) {
@@ -20,11 +18,11 @@ bool Compiler::compile(char const * source, Chunk & chunk) {
 
     hadError_ = false;
     panicMode_ = false;
-    
+
     advance_();
     expression_();
     consume_(Token::END, "Expect end of expression");
-    
+
     endCompilation_();
     return !hadError_;
 }
@@ -32,7 +30,6 @@ bool Compiler::compile(char const * source, Chunk & chunk) {
 void Compiler::advance_() {
     // record last token
     previousToken_ = currentToken_;
-
     // spin until we get a valid token (or END):
     for(;;) {
         currentToken_ = scanner_.scanToken();
@@ -111,22 +108,30 @@ void Compiler::parse_(Precedence precedence) {
     prefixRule();
 
     // Perforce infix rules on tokens from left to right:
-    while( getRule_(currentToken_.type)->precedence >= precedence ){
+    for( ;; ){
+        ParseRule const * rule = getRule_(currentToken_.type);
+        if( rule->precedence < precedence ){
+            // Stop: the new token has lower precedence so is not part of the current operand
+            break;
+        }
+        // Consume and then compile the operator:
         advance_();
-        // call the rule for the same token (now previous)
-        getRule_(previousToken_.type)->infix();  // Can't be NULL as Precedence > NONE (refer getRule_ table)
+        rule->infix();  // Can't be NULL as Precedence > NONE (refer getRule_ table)
     }
 }
 
 void Compiler::grouping_() {
+    // The opening '( is already consumed, expect an expression next:
     expression_();
+
+    // consume the closing brace:
     consume_(Token::RIGHT_PAREN, "Expect ')' after expression");
 }
 
 void Compiler::unary_() {
     Token::Type operatorType = previousToken_.type;
     uint16_t line = previousToken_.line;
-    
+
     // Compile the operand evaluation first:
     expression_();
 
@@ -222,7 +227,7 @@ void Compiler::errorAt_(Token* token, const char* message) {
     if( panicMode_ ) return;  // suppress errors after the first
     panicMode_ = true;
 
-    fprintf(stderr, "[line %d] Error", token->line);
+    fprintf(stderr, "%d: Error", token->line);
 
     if (token->type == Token::END) {
         fprintf(stderr, " at end");

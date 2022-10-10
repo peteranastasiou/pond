@@ -22,4 +22,6 @@ private:
 };
 
 void debugScanner(char const * source);
+
+void printToken(Token token);
 char const * tokenTypeToStr(Token::Type t);
