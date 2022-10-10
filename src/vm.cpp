@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 
 Vm::Vm() {
@@ -39,23 +40,27 @@ Value Vm::pop() {
     return *stackTop_;
 }
 
-void Vm::binaryOp_(uint8_t op){
-    Value b = pop();
-    Value a = pop();
-    switch( op ){
-        case OpCode::ADD:
-            push(a + b);
-            break;
-        case OpCode::SUBTRACT:
-            push(a - b);
-            break;
-        case OpCode::MULTIPLY:
-            push(a * b);
-            break;
-        case OpCode::DIVIDE:
-            push(a / b);
-            break;
+Value Vm::peek(int index) {
+    return stackTop_[-1 - index];
+}
+
+bool Vm::binaryOp_(uint8_t op){
+    if( !peek(0).isNumber() || !peek(1).isNumber() ){
+        runtimeError_("Operands must be numbers.");
+        return false;
     }
+
+    double b = pop().as.number;
+    double a = pop().as.number;
+    double c;
+    switch( op ){
+        case OpCode::ADD:       c = a + b; break;
+        case OpCode::SUBTRACT:  c = a - b; break;
+        case OpCode::MULTIPLY:  c = a * b; break;
+        case OpCode::DIVIDE:    c = a / b; break;
+    }
+    push(Value::number(c));
+    return true;
 }
 
 InterpretResult Vm::run_() {
@@ -79,15 +84,24 @@ InterpretResult Vm::run_() {
 
         uint8_t instr = readByte_();
         switch( instr ){
+            case OpCode::NIL: push(Value::nil()); break;
+            case OpCode::TRUE: push(Value::boolean(true)); break;
+            case OpCode::FALSE: push(Value::boolean(false)); break;
             case OpCode::ADD:
             case OpCode::SUBTRACT:
             case OpCode::MULTIPLY:
             case OpCode::DIVIDE:{
-                binaryOp_(instr);
+                if( !binaryOp_(instr) ) return InterpretResult::RUNTIME_ERR;
                 break;
             }
             case OpCode::NEGATE:{
-                push(-pop());
+                // ensure is numeric:
+                if( !peek(0).isNumber() ){
+                    runtimeError_("Operand must be a number");
+                    return InterpretResult::RUNTIME_ERR;
+                }
+
+                push( Value::number(-pop().as.number) );
                 break;
             }
             case OpCode::RETURN:{
@@ -106,4 +120,17 @@ InterpretResult Vm::run_() {
             }
         }
     }
+}
+
+void Vm::runtimeError_(const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
+
+    size_t instruction = ip_ - chunk_->getCode() - 1;
+    int line = 0;  // TODO decypher line number!
+    fprintf(stderr, "[line %d] in script\n", line);
+    resetStack_();
 }

@@ -59,6 +59,9 @@ private:
     void emitByteAtLine_(uint8_t byte, uint16_t line);
     inline void emitBytes_(uint8_t b1, uint8_t b2){ emitByte_(b1); emitByte_(b2); }
     void endCompilation_();
+    void emitTrue_();
+    void emitFalse_();
+    void emitNil_();
     void emitReturn_();
     void emitConstant_(Value value);
     uint8_t makeConstant_(Value value);

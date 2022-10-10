@@ -20,12 +20,15 @@ public:
     // stack operations:
     void push(Value value);
     Value pop();
+    Value peek(int index);  // index counts from top (end) of stack
 
 private:
     InterpretResult run_();
     inline uint8_t readByte_() { return *ip_++; }
     inline void resetStack_() { stackTop_ = stack_; }
-    void binaryOp_(uint8_t op);
+    bool binaryOp_(uint8_t op);
+    void runtimeError_(const char* format, ...);
+
 
     static int const STACK_MAX = 256;
 

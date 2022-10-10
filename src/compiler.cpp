@@ -78,6 +78,18 @@ void Compiler::emitReturn_() {
     emitByte_(OpCode::RETURN);
 }
 
+void Compiler::emitTrue_() {
+    emitByte_(OpCode::TRUE);
+}
+
+void Compiler::emitFalse_() {
+    emitByte_(OpCode::FALSE);
+}
+
+void Compiler::emitNil_() {
+    emitByte_(OpCode::NIL);
+}
+
 void Compiler::emitConstant_(Value value) {
     emitBytes_(OpCode::CONSTANT, makeConstant_(value));
 }
@@ -165,8 +177,8 @@ void Compiler::binary_() {
 
 void Compiler::number_() {
     // shouldn't fail as we already validated the token as a number:
-    double value = strtod(previousToken_.start, nullptr);
-    emitConstant_(value);
+    double n = strtod(previousToken_.start, nullptr);
+    emitConstant_(Value::number(n));
 }
 
 #define RULE(fn) [this](){ this->fn(); }
@@ -197,15 +209,15 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
         [Token::AND]           = {NULL,            NULL,          Precedence::NONE},
         [Token::ELSE]          = {NULL,            NULL,          Precedence::NONE},
-        [Token::FALSE]         = {NULL,            NULL,          Precedence::NONE},
+        [Token::FALSE]         = {RULE(emitFalse_),NULL,          Precedence::NONE},
         [Token::FOR]           = {NULL,            NULL,          Precedence::NONE},
         [Token::FN]            = {NULL,            NULL,          Precedence::NONE},
         [Token::IF]            = {NULL,            NULL,          Precedence::NONE},
-        [Token::NIL]           = {NULL,            NULL,          Precedence::NONE},
+        [Token::NIL]           = {RULE(emitNil_),  NULL,          Precedence::NONE},
         [Token::OR]            = {NULL,            NULL,          Precedence::NONE},
         [Token::PRINT]         = {NULL,            NULL,          Precedence::NONE},
         [Token::RETURN]        = {NULL,            NULL,          Precedence::NONE},
-        [Token::TRUE]          = {NULL,            NULL,          Precedence::NONE},
+        [Token::TRUE]          = {RULE(emitTrue_), NULL,          Precedence::NONE},
         [Token::VAR]           = {NULL,            NULL,          Precedence::NONE},
         [Token::WHILE]         = {NULL,            NULL,          Precedence::NONE},
         [Token::ERROR]         = {NULL,            NULL,          Precedence::NONE},

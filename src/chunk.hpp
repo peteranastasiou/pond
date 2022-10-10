@@ -8,12 +8,15 @@
 
 namespace OpCode {
 enum {
-    CONSTANT,       // Load a constant (literal) from the chunk
+    CONSTANT,       // Push a constant (literal) from the chunk
+    NIL,            // Push nil to the stack
+    TRUE,           // Push true to the stack
+    FALSE,          // Push false to the stack 
     ADD,
     SUBTRACT,
     MULTIPLY,
     DIVIDE,
-    NEGATE,         // unary negative
+    NEGATE,
     RETURN,
 };
 }

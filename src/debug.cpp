@@ -43,6 +43,15 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
     case OpCode::CONSTANT:
       return constantInstruction_("CONSTANT", chunk, offset);
 
+    case OpCode::NIL:
+      return simpleInstruction_("NIL");
+
+    case OpCode::TRUE:
+      return simpleInstruction_("TRUE");
+
+    case OpCode::FALSE:
+      return simpleInstruction_("FALSE");
+
     case OpCode::ADD:
       return simpleInstruction_("ADD");
 

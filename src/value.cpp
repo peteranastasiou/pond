@@ -5,5 +5,9 @@
 
 
 void printValue(Value value) {
-  printf("%g", value);
+  switch( value.type ){
+    case Value::NIL:    printf("nil"); break;
+    case Value::BOOL:   printf(value.as.boolean ? "true" : "false"); break;
+    case Value::NUMBER: printf("%g", value.as.number); break;
+  }
 }
