@@ -133,7 +133,7 @@ void Compiler::unary_() {
     uint16_t line = previousToken_.line;
 
     // Compile the operand evaluation first:
-    expression_();
+    parse_(Precedence::UNARY);
 
     // Result of the operand gets negated:
     switch( operatorType ){
