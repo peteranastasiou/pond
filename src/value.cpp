@@ -1,7 +1,12 @@
 
 #include "value.hpp"
+#include "util.hpp"
 
 #include <stdio.h>
+
+std::string ObjString::toString() {
+    return str;
+}
 
 bool Value::equals(Value other) {
     if( type != other.type ) return false;
@@ -20,22 +25,16 @@ bool Value::equals(Value other) {
     }
 }
 
-
 std::string Value::toString() {
-    
+    switch( type ){
+        case NIL:     return "nil";
+        case BOOL:    return as.boolean ? "true" : "false";
+        case NUMBER:  return util::format("%g", as.number);
+        case OBJECT:  return as.obj->toString();
+        default:      return "???";
+    }
 }
 
 void Value::print() {
-    switch( type ){
-        case Value::NIL:    printf("nil"); break;
-        case Value::BOOL:   printf(as.boolean ? "true" : "false"); break;
-        case Value::NUMBER: printf("%g", as.number); break;
-        case Value::OBJECT: printObject_(); break;
-    }
-}
-
-void Value::printObject_() {
-    switch( as.obj->type ){
-        case Obj::Type::STRING: printf("%s", asCString()); break;
-    }
+    printf("%s", toString().c_str());
 }

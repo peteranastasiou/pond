@@ -127,8 +127,8 @@ InterpretResult Vm::run_() {
                 break;
             }
             case OpCode::ADD:{
-                if( peek(0).isString() && peek(1).isString() ){ 
-                    // TODO implicitly convert second operand to string
+                if( peek(1).isString() ){ 
+                    // implicitly convert second operand to string
                     concatenate_();
 
                 }else if( peek(0).isNumber() && peek(1).isNumber() ){
