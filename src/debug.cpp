@@ -40,39 +40,23 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
 
   uint8_t instr = chunk->code[(size_t)offset];
   switch(instr){
-    case OpCode::CONSTANT:
-      return constantInstruction_("CONSTANT", chunk, offset);
-
-    case OpCode::NIL:
-      return simpleInstruction_("NIL");
-
-    case OpCode::TRUE:
-      return simpleInstruction_("TRUE");
-
-    case OpCode::FALSE:
-      return simpleInstruction_("FALSE");
-
-    case OpCode::ADD:
-      return simpleInstruction_("ADD");
-
-    case OpCode::SUBTRACT:
-      return simpleInstruction_("SUBTRACT");
-
-    case OpCode::MULTIPLY:
-      return simpleInstruction_("MULTIPLY");
-
-    case OpCode::DIVIDE:
-      return simpleInstruction_("DIVIDE");
-
-    case OpCode::NEGATE:
-      return simpleInstruction_("NEGATE");
-
-    case OpCode::NOT:
-      return simpleInstruction_("NOT");
-
-    case OpCode::RETURN:
-      return simpleInstruction_("RETURN");
-
+    case OpCode::CONSTANT:      return constantInstruction_("CONSTANT", chunk, offset);
+    case OpCode::NIL:           return simpleInstruction_("NIL");
+    case OpCode::TRUE:          return simpleInstruction_("TRUE");
+    case OpCode::FALSE:         return simpleInstruction_("FALSE");
+    case OpCode::ADD:           return simpleInstruction_("ADD");
+    case OpCode::EQUAL:         return simpleInstruction_("EQUAL"); 
+    case OpCode::NOT_EQUAL:     return simpleInstruction_("NOT_EQUAL");     
+    case OpCode::GREATER:       return simpleInstruction_("GREATER");   
+    case OpCode::GREATER_EQUAL: return simpleInstruction_("GREATER_EQUAL");         
+    case OpCode::LESS:          return simpleInstruction_("LESS"); 
+    case OpCode::LESS_EQUAL:    return simpleInstruction_("LESS_EQUAL");  
+    case OpCode::SUBTRACT:      return simpleInstruction_("SUBTRACT");
+    case OpCode::MULTIPLY:      return simpleInstruction_("MULTIPLY");
+    case OpCode::DIVIDE:        return simpleInstruction_("DIVIDE");
+    case OpCode::NEGATE:        return simpleInstruction_("NEGATE");
+    case OpCode::NOT:           return simpleInstruction_("NOT");
+    case OpCode::RETURN:        return simpleInstruction_("RETURN");
     default:
       printf("Unknown opcode %i\n", instr);
       return 1;

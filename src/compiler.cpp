@@ -187,6 +187,10 @@ void Compiler::number_() {
     emitConstant_(Value::number(n));
 }
 
+void Compiler::string_() {
+    emitConstant_(Value::string(previousToken_.start+1, previousToken_.length-2));
+}
+
 #define RULE(fn) [this](){ this->fn(); }
 
 ParseRule const * Compiler::getRule_(Token::Type type) {
@@ -211,7 +215,7 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::LESS]          = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::LESS_EQUAL]    = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::IDENTIFIER]    = {NULL,            NULL,          Precedence::NONE},
-        [Token::STRING]        = {NULL,            NULL,          Precedence::NONE},
+        [Token::STRING]        = {RULE(string_),   NULL,          Precedence::NONE},
         [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
         [Token::AND]           = {NULL,            NULL,          Precedence::NONE},
         [Token::ELSE]          = {NULL,            NULL,          Precedence::NONE},

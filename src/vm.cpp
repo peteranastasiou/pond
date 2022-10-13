@@ -57,7 +57,6 @@ bool Vm::binaryOp_(uint8_t op){
         case OpCode::GREATER_EQUAL: push(Value::boolean( a >= b )); break;
         case OpCode::LESS:          push(Value::boolean( a < b )); break;
         case OpCode::LESS_EQUAL:    push(Value::boolean( a <= b )); break;
-        case OpCode::ADD:           push(Value::number( a + b )); break;
         case OpCode::SUBTRACT:      push(Value::number( a - b )); break;
         case OpCode::MULTIPLY:      push(Value::number( a * b )); break;
         case OpCode::DIVIDE:        push(Value::number( a / b )); break;
@@ -71,6 +70,13 @@ bool Vm::isTruthy_(Value value) {
         case Value::BOOL: return value.as.boolean;
         default:          return true;  // All other types are true!
     }
+}
+
+void Vm::concatenate_() {
+    Value bValue = pop();
+    std::string b = bValue.toString();
+    std::string a = pop().asString();
+    push( Value::string(a + b) );
 }
 
 InterpretResult Vm::run_() {
@@ -114,11 +120,25 @@ InterpretResult Vm::run_() {
             case OpCode::GREATER_EQUAL:
             case OpCode::LESS:
             case OpCode::LESS_EQUAL:
-            case OpCode::ADD:
             case OpCode::SUBTRACT:
             case OpCode::MULTIPLY:
             case OpCode::DIVIDE:{
                 if( !binaryOp_(instr) ) return InterpretResult::RUNTIME_ERR;
+                break;
+            }
+            case OpCode::ADD:{
+                if( peek(0).isString() && peek(1).isString() ){ 
+                    // TODO implicitly convert second operand to string
+                    concatenate_();
+
+                }else if( peek(0).isNumber() && peek(1).isNumber() ){
+                    double b = pop().as.number;
+                    double a = pop().as.number;
+                    push(Value::number( a + b ));
+                }else{
+                    runtimeError_("Invalid operands for +");
+                    return InterpretResult::RUNTIME_ERR;
+                }
                 break;
             }
             case OpCode::NEGATE:{

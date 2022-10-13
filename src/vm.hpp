@@ -28,6 +28,7 @@ private:
     inline void resetStack_() { stackTop_ = stack_; }
     bool binaryOp_(uint8_t op);
     bool isTruthy_(Value value);
+    void concatenate_();
     void runtimeError_(const char* format, ...);
 
 

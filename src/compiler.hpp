@@ -50,6 +50,7 @@ private:
     void expression_();
     void parse_(Precedence precedence);  // parse everything with >= precendence
     void number_();
+    void string_();
     void unary_();
     void binary_();
     void grouping_();  // parentheses in expressions

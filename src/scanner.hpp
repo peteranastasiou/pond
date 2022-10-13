@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+/**
+ * TODO streaming not load whole thing into a buffer
+*/
 
 struct Token {
     enum Type {
