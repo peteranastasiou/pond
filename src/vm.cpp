@@ -9,6 +9,7 @@
 
 
 Vm::Vm() {
+    objects_ = nullptr;
     resetStack_();
 }
 

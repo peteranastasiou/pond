@@ -2,6 +2,8 @@
 
 #include "chunk.hpp"
 #include "value.hpp"
+#include "object.hpp"
+#include <unordered_set>
 
 enum class InterpretResult {
     OK,
@@ -38,4 +40,6 @@ private:
     uint8_t * ip_;      // instruction pointer
     Value stack_[STACK_MAX];
     Value * stackTop_;  // points past the last value in the stack
+    Obj * objects_;     // linked list of objects
+    std::unordered_set<ObjString *> internedStrings;
 };

@@ -4,10 +4,6 @@
 
 #include <stdio.h>
 
-std::string ObjString::toString() {
-    return str;
-}
-
 bool Value::equals(Value other) {
     if( type != other.type ) return false;
 
