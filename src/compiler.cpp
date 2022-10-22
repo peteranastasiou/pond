@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-Compiler::Compiler() {
+Compiler::Compiler(Vm * vm) : vm_(vm) {
 }
 
 Compiler::~Compiler() {
@@ -188,7 +188,7 @@ void Compiler::number_() {
 }
 
 void Compiler::string_() {
-    emitConstant_(Value::string(previousToken_.start+1, previousToken_.length-2));
+    emitConstant_(Value::string(vm_, previousToken_.start+1, previousToken_.length-2));
 }
 
 #define RULE(fn) [this](){ this->fn(); }

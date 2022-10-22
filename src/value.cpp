@@ -13,7 +13,8 @@ bool Value::equals(Value other) {
         case NUMBER:  return as.number == as.number;
         case OBJECT:{
             if( as.obj->type == Obj::Type::STRING ){
-                return asString().compare(other.asCString()) == 0;
+                // all strings are interned --> therefore can compare pointers
+                return asObjString() == other.asObjString();
             }
             return false; // TODO other object types
         }

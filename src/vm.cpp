@@ -14,10 +14,11 @@ Vm::Vm() {
 }
 
 Vm::~Vm() {
+    freeObjects_();
 }
 
 InterpretResult Vm::interpret(char const * source) {
-    Compiler compiler;
+    Compiler compiler(this);
     Chunk chunk;
     if( !compiler.compile(source, chunk) ){
         return InterpretResult::COMPILE_ERR;
@@ -25,6 +26,15 @@ InterpretResult Vm::interpret(char const * source) {
     chunk_= &chunk;
     ip_ = chunk_->getCode();
     return run_();
+}
+
+void Vm::registerObj(Obj * obj){
+    obj->next = objects_;  // previous head
+    objects_ = obj;        // new head
+}
+
+void Vm::deregisterObj(Obj * obj){
+    // TODO
 }
 
 void Vm::push(Value value) {
@@ -36,7 +46,7 @@ Value Vm::pop() {
     stackTop_--;
     if( stackTop_ == stack_-1 ){
         printf("Fatal: pop empty stack\n");
-        exit(1);  // todo error handling
+        exit(1);
     }
     return *stackTop_;
 }
@@ -77,7 +87,7 @@ void Vm::concatenate_() {
     Value bValue = pop();
     std::string b = bValue.toString();
     std::string a = pop().asString();
-    push( Value::string(a + b) );
+    push( Value::string(this, a + b) );
 }
 
 InterpretResult Vm::run_() {
@@ -180,4 +190,14 @@ void Vm::runtimeError_(const char* format, ...) {
     int line = 0;  // TODO decypher line number!
     fprintf(stderr, "[line %d] in script\n", line);
     resetStack_();
+}
+
+void Vm::freeObjects_() {
+    // iterate linked list of objects, deleting them
+    Obj * obj = objects_;
+    while( obj != nullptr ){
+        Obj * next  = obj->next;
+        delete obj;
+        obj = next;
+    }
 }

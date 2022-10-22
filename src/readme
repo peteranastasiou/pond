@@ -1,0 +1,43 @@
+no-swig interop
+auto binding generation for C? C++?
+can implement abstract classes in pond and call them from C++ e.g.:
+
+// Interface definition
+interface Enemy {
+    int attack(int n);
+}
+
+// example C++ function with bindings
+void addEnemy(Enemy * e);
+
+// pond
+class Cat is Enemy {
+    fn attack(int n){
+        print("cat attack!");
+        return int;
+    }
+}
+
+addEnemy(cat);
+
+// bindings:
+
+class EnemyWrapper : public Enemy {
+    ...
+    int attack(int n) override {
+        this.vm.push(this.v);
+        this.vm.push("attack");
+        this.vm.callMethod();
+        return this.vm.pop_integer();
+    }
+    ...
+};
+
+static int addEnemy_wrapper(Vm * vm) {
+    Value v = vm.pop();
+    // TODO check type
+    Enemy * e = new EnemyWrapper(vm, v);
+    addEnemy(e);
+}
+
+registerBinding("addEnemy", addEnemy_wrapper);

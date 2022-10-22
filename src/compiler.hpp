@@ -4,6 +4,8 @@
 #include "scanner.hpp"
 #include <functional>
 
+class Vm;
+
 // Precedence order from lowest to highest:
 enum class Precedence {
   NONE,
@@ -29,7 +31,7 @@ struct ParseRule {
 
 class Compiler {
 public:
-    Compiler();
+    Compiler(Vm * vm);
 
     ~Compiler();
 
@@ -72,6 +74,7 @@ private:
     void errorAtPrevious_(const char* message);
     void errorAt_(Token* token, const char* message);
 
+    Vm * vm_;
     Scanner scanner_;
     Chunk * compilingChunk_;
     Token currentToken_;

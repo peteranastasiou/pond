@@ -15,7 +15,7 @@ struct Value {
     union {
         bool boolean;
         double number;
-        Obj * obj;
+        Obj * obj;      // TODO what happens when table rehashes!?!
     } as;
 
     // Constructor-likes:
@@ -23,9 +23,9 @@ struct Value {
     static inline Value boolean(bool b) { return (Value){BOOL, {.boolean = b}}; }
     static inline Value number(double n) { return (Value){NUMBER, {.number = n}}; }
     static inline Value object(Obj * o) { return (Value){OBJECT, {.obj = o}}; }
-    static inline Value string(char const * c, int l) { return object(new ObjString(c, l)); }
-    static inline Value string(char const * c) { return object(new ObjString(c, (int)strlen(c))); }
-    static inline Value string(std::string s) { return object(new ObjString(s)); }
+    static inline Value string(Vm * vm, char const * c, int l) { return object(new ObjString(vm, c, l)); }
+    static inline Value string(Vm * vm, char const * c) { return object(new ObjString(vm, c, (int)strlen(c))); }
+    static inline Value string(Vm * vm, std::string s) { return object(new ObjString(vm, s)); }
 
     // Helpers for value types
     inline bool isNil() { return type == NIL; }

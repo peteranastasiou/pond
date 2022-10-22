@@ -24,6 +24,10 @@ public:
     Value pop();
     Value peek(int index);  // index counts from top (end) of stack
 
+    // adding/removing objects, called from Obj(), ~Obj()
+    void registerObj(Obj * obj);
+    void deregisterObj(Obj * obj);
+
 private:
     InterpretResult run_();
     inline uint8_t readByte_() { return *ip_++; }
@@ -32,7 +36,7 @@ private:
     bool isTruthy_(Value value);
     void concatenate_();
     void runtimeError_(const char* format, ...);
-
+    void freeObjects_();
 
     static int const STACK_MAX = 256;
 
