@@ -58,6 +58,8 @@ public:
     // Get a constant value by its index
     Value getConstant(uint8_t index);
 
+    uint8_t numConstants();
+
     static uint8_t const MAX_CONSTANTS = 255;  // constant index must fit in a byte (for now)
 
 private:

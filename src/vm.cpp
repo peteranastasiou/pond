@@ -127,6 +127,15 @@ InterpretResult Vm::run_() {
     debugInternedStringSet(internedStrings_);
     debugObjectLinkedList(objects_);
 
+    printf("Constants:\n");
+    for( uint8_t i =0; i < chunk_->numConstants(); ++i ){
+        printf(" %i ", i);
+        Value v = chunk_->getConstant(i);
+        if( v.isObject() ) printf("%p [", v.as.obj);
+        v.print();
+        printf("]\n");
+    }
+
     for(;;) {
 
 #ifdef DEBUG_TRACE_EXECUTION

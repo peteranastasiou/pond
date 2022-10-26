@@ -51,3 +51,7 @@ uint8_t Chunk::addConstant(Value value) {
 Value Chunk::getConstant(uint8_t index) {
     return constants[index];
 }
+
+uint8_t Chunk::numConstants() {
+    return (uint8_t)constants.size();
+}
