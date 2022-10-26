@@ -10,15 +10,17 @@ class Vm;
 */
 
 struct Obj {
-    Obj(Vm * vm);
+    enum Type {
+        STRING
+    };
+
+    Obj(Vm * vm, Type t);
+
     virtual ~Obj();
 
     virtual std::string toString()=0;
     
-    enum Type {
-        STRING
-    } type;
-
+    Type type;
     Obj * next;  // linked list of all objects
 
 private:

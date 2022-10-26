@@ -3,7 +3,7 @@
 #include "vm.hpp"
 
 
-Obj::Obj(Vm * vm): vm_(vm) {
+Obj::Obj(Vm * vm, Type t): type(t), vm_(vm) {
     vm_->registerObj(this);
 }
 

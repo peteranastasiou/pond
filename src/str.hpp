@@ -15,8 +15,8 @@ struct Key {
  * Garbage Collected String Object
  */
 struct ObjString : public Obj, Key {
-    ObjString(Vm * vm) : Obj(vm) {}
-    ObjString(Vm * vm, std::string s) : Obj(vm), str(s) {}
+    ObjString(Vm * vm) : Obj(vm, Obj::Type::STRING) {}
+    ObjString(Vm * vm, std::string s) : Obj(vm, Obj::Type::STRING), str(s) {}
     virtual ~ObjString() {}  // std::string is automatically deleted
 
     virtual std::string toString() override { return str; }

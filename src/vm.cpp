@@ -61,8 +61,8 @@ ObjString * Vm::addString(std::string str){
     // Not in the set - create a new memory managed object:
     ObjString * ostr = new ObjString(this, str);
     internedStrings_.emplace(ostr);
-    debugInternedStringSet(internedStrings_);
     printf("New string [%s] at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
+    debugInternedStringSet(internedStrings_);
     return ostr;
 }
 
