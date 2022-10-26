@@ -3,7 +3,7 @@
 #include "chunk.hpp"
 #include "value.hpp"
 #include "object.hpp"
-#include <unordered_set>
+#include "str.hpp"
 
 enum class InterpretResult {
     OK,
@@ -28,6 +28,10 @@ public:
     void registerObj(Obj * obj);
     void deregisterObj(Obj * obj);
 
+    // intern string
+    ObjString * addString(char const * str, int len);
+    ObjString * addString(std::string str);
+
 private:
     InterpretResult run_();
     inline uint8_t readByte_() { return *ip_++; }
@@ -45,5 +49,5 @@ private:
     Value stack_[STACK_MAX];
     Value * stackTop_;  // points past the last value in the stack
     Obj * objects_;     // linked list of objects
-    std::unordered_set<ObjString *> internedStrings;
+    InternedStringSet internedStrings_;
 };

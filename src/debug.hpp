@@ -2,6 +2,7 @@
 
 #include "chunk.hpp"
 #include "scanner.hpp"
+#include "str.hpp"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -25,3 +26,7 @@ void debugScanner(char const * source);
 
 void printToken(Token token);
 char const * tokenTypeToStr(Token::Type t);
+
+void debugInternedStringSet(InternedStringSet & set);
+
+void debugObjectLinkedList(Obj * obj);

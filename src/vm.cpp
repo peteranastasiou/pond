@@ -34,7 +34,36 @@ void Vm::registerObj(Obj * obj){
 }
 
 void Vm::deregisterObj(Obj * obj){
-    // TODO
+    printf("Deregister obj\n");
+}
+
+ObjString * Vm::addString(char const * str, int len){
+    // Elevate to std::string
+    std::string s(str, str+len);
+    return addString(s);
+}
+
+ObjString * Vm::addString(std::string str){
+    {
+        // Search if string is already interned:
+        Lookup lookup{str};
+        auto search = internedStrings_.find(&lookup);
+        if( search != internedStrings_.end() ){
+            // Found it
+            Key * key = *search;
+            ObjString *ostr = (ObjString *)key;
+
+            printf("String [%s] already exists at %p: [%s]\n", str.c_str(), key, ostr->get().c_str());
+            // Must be an ObjString because thats all we ever add to the set
+            return (ObjString *)key;
+        }
+    }
+    // Not in the set - create a new memory managed object:
+    ObjString * ostr = new ObjString(this, str);
+    internedStrings_.emplace(ostr);
+    debugInternedStringSet(internedStrings_);
+    printf("New string [%s] at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
+    return ostr;
 }
 
 void Vm::push(Value value) {
@@ -87,13 +116,16 @@ void Vm::concatenate_() {
     Value bValue = pop();
     std::string b = bValue.toString();
     std::string a = pop().asString();
-    push( Value::string(this, a + b) );
+    push( Value::object(addString(a + b)) );
 }
 
 InterpretResult Vm::run_() {
 #ifdef DEBUG_TRACE_EXECUTION
       Dissassembler disasm;  
 #endif
+
+    debugInternedStringSet(internedStrings_);
+    debugObjectLinkedList(objects_);
 
     for(;;) {
 

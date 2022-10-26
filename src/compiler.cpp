@@ -1,6 +1,7 @@
 
 #include "compiler.hpp"
 #include "debug.hpp"
+#include "vm.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -188,7 +189,8 @@ void Compiler::number_() {
 }
 
 void Compiler::string_() {
-    emitConstant_(Value::string(vm_, previousToken_.start+1, previousToken_.length-2));
+    ObjString * str = vm_->addString(previousToken_.start+1, previousToken_.length-2);
+    emitConstant_(Value::object(str));
 }
 
 #define RULE(fn) [this](){ this->fn(); }

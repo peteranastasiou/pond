@@ -10,7 +10,3 @@ Obj::Obj(Vm * vm): vm_(vm) {
 Obj::~Obj(){
     vm_->deregisterObj(this);
 }
-
-std::string ObjString::toString() {
-    return str;
-}

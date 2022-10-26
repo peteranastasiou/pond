@@ -141,3 +141,19 @@ char const * tokenTypeToStr(Token::Type t) {
       default:                    return "UNIDENTIFIED";
   }
 }
+
+void debugInternedStringSet(InternedStringSet & set) {
+    printf("Interned string set:\n");
+    for( auto & it : set ){
+        printf("%p: [%s]\n", it, it->get().c_str());
+    }
+}
+
+
+void debugObjectLinkedList(Obj * obj) {
+    printf("Objects:\n");
+    while( obj != nullptr ){
+        printf("%p: %s\n", obj, obj->toString().c_str());
+        obj = obj->next;
+    }
+}
