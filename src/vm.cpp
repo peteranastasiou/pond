@@ -44,25 +44,16 @@ ObjString * Vm::addString(char const * str, int len){
 }
 
 ObjString * Vm::addString(std::string str){
-    {
-        // Search if string is already interned:
-        Lookup lookup{str};
-        auto search = internedStrings_.find(&lookup);
-        if( search != internedStrings_.end() ){
-            // Found it
-            Key * key = *search;
-            ObjString *ostr = (ObjString *)key;
-
-            printf("String [%s] already exists at %p: [%s]\n", str.c_str(), key, ostr->get().c_str());
-            // Must be an ObjString because thats all we ever add to the set
-            return (ObjString *)key;
-        }
+    // See if string already exists
+    ObjString * ostr = internedStrings_.find(str);
+    if( ostr != nullptr ){
+        printf("String [%s] already exists at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
+        return ostr;
     }
     // Not in the set - create a new memory managed object:
-    ObjString * ostr = new ObjString(this, str);
-    internedStrings_.emplace(ostr);
+    ostr = internedStrings_.add(this, str);
     printf("New string [%s] at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
-    debugInternedStringSet(internedStrings_);
+    // debugInternedStringSet(internedStrings_);
     return ostr;
 }
 

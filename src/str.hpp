@@ -11,9 +11,6 @@ struct Key {
     virtual std::string const & get() const = 0;
 };
 
-/**
- * Garbage Collected String Object
- */
 struct ObjString : public Obj, Key {
     ObjString(Vm * vm) : Obj(vm, Obj::Type::STRING) {}
     ObjString(Vm * vm, std::string s) : Obj(vm, Obj::Type::STRING), str(s) {}
@@ -26,39 +23,26 @@ struct ObjString : public Obj, Key {
     std::string str;
 };
 
-/**
- * Throw-away object used for string lookups
- */
-struct Lookup : public Key {
-    Lookup(std::string s) : str(s) {}
-    virtual ~Lookup() {}
+// predeclare Vm
+class Vm;
 
-    virtual std::string const & get() const override { return str; }
-
-    std::string str;
-};
-
-/**
- * Hash value of a Key
- */
-struct KeyHash {
-    std::size_t operator()(Key const * key) const {
-        return std::hash<std::string>()(key->get());
-    }
-};
-
-/**
- * Compare two Keys
- */
-struct KeysEqual {
-    bool operator()(Key const * lhs, Key const * rhs) const {
-        return !lhs->get().compare(rhs->get());
-    }
-};
+// predeclare hidden helper class
+class InternedStringHashSet;
 
 /**
  * Set of strings. All elements must be ObjStrings
  * Key interface is used so we can do cheap lookups
  */
-typedef std::unordered_set<Key*, KeyHash, KeysEqual> InternedStringSet;
+class InternedStringSet {
+public:
+    InternedStringSet();
+    virtual ~InternedStringSet();
 
+    ObjString * find(std::string s) const;  // TODO change to char const *
+
+    ObjString * add(Vm * vm, std::string s);  // TODO change to char const *
+
+private:
+    // Pointer to implementation, to hidden helper class:
+    InternedStringHashSet * hashSet_;
+};
