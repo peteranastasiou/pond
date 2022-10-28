@@ -46,14 +46,10 @@ ObjString * Vm::addString(char const * str, int len){
 ObjString * Vm::addString(std::string str){
     // See if string already exists
     ObjString * ostr = internedStrings_.find(str);
-    if( ostr != nullptr ){
-        printf("String [%s] already exists at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
-        return ostr;
-    }
+    if( ostr != nullptr ) return ostr;  // already exists!
+
     // Not in the set - create a new memory managed object:
     ostr = internedStrings_.add(this, str);
-    printf("New string [%s] at %p: [%s]\n", str.c_str(), ostr, ostr->get().c_str());
-    // debugInternedStringSet(internedStrings_);
     return ostr;
 }
 
@@ -113,9 +109,8 @@ void Vm::concatenate_() {
 InterpretResult Vm::run_() {
 #ifdef DEBUG_TRACE_EXECUTION
       Dissassembler disasm;  
-#endif
 
-    debugInternedStringSet(internedStrings_);
+    internedStrings_.debug();
     debugObjectLinkedList(objects_);
 
     printf("Constants:\n");
@@ -126,6 +121,8 @@ InterpretResult Vm::run_() {
         v.print();
         printf("]\n");
     }
+
+#endif
 
     for(;;) {
 

@@ -42,6 +42,8 @@ public:
 
     ObjString * add(Vm * vm, std::string s);  // TODO change to char const *
 
+    void debug();
+
 private:
     // Pointer to implementation, to hidden helper class:
     InternedStringHashSet * hashSet_;

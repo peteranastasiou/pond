@@ -142,15 +142,6 @@ char const * tokenTypeToStr(Token::Type t) {
     }
 }
 
-void debugInternedStringSet(InternedStringSet & set) {
-    // printf("Interned string set:\n");
-    // for( auto & it : set ){
-    //     ObjString * ostr = (ObjString*) it;
-    //     printf("  %p %p: [%s]\n", it, ostr, it->get().c_str());
-    // }
-}
-
-
 void debugObjectLinkedList(Obj * obj) {
     printf("Objects:\n");
     while( obj != nullptr ){

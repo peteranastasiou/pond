@@ -55,21 +55,24 @@ InternedStringSet::~InternedStringSet() {
 ObjString * InternedStringSet::find(std::string s) const {
     // Search if string is already interned:
     Lookup lookup{s};
-    auto search = hashSet_->find(&lookup);
-    if( search == hashSet_->end() ){
+    auto key = hashSet_->find(&lookup);
+    if( key == hashSet_->end() ){
         return nullptr; // not found
     }
-    // Found it
-    Key * key = *search;
-    ObjString *ostr = (ObjString *)key;
-
-    printf("String [%s] already exists at %p: [%s]\n", s.c_str(), key, ostr->get().c_str());
+    // Found it:
     // Must be an ObjString because thats all we ever add to the set
-    return (ObjString *)key;
+    return (ObjString*) *key;
 }
 
 ObjString * InternedStringSet::add(Vm * vm, std::string s) {
     ObjString * ostr = new ObjString(vm, s);
     hashSet_->emplace(ostr);
     return ostr;
+}
+
+void InternedStringSet::debug() {
+    printf("Interned string set:\n");
+    for( auto & it : *hashSet_ ){
+        printf("  %p: '%s'\n", (ObjString*) it, it->get().c_str());
+    }
 }
