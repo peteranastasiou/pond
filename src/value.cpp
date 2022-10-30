@@ -22,9 +22,9 @@ bool Value::equals(Value other) {
     }
 }
 
-std::string Value::toString() {
+ObjString * Value::toString(Vm * vm) {
     switch( type ){
-        case NIL:     return "nil";
+        case NIL:     return new ObjString(vm, "nil");
         case BOOL:    return as.boolean ? "true" : "false";
         case NUMBER:  return util::format("%g", as.number);
         case OBJECT:  return as.obj->toString();

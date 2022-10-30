@@ -5,22 +5,62 @@
 #include <unordered_set>
 
 /**
- * Interface for string keys
+ * Interface for strings
  */
-struct Key {
-    virtual std::string const & get() const = 0;
+class String {
+public:
+    virtual ~String() {}
+    virtual char const * get() const = 0;
+    virtual uint32_t getHash() const = 0;
+    virtual int getLength() const = 0;
 };
 
-struct ObjString : public Obj, Key {
-    ObjString(Vm * vm) : Obj(vm, Obj::Type::STRING) {}
-    ObjString(Vm * vm, std::string s) : Obj(vm, Obj::Type::STRING), str(s) {}
-    virtual ~ObjString() {}  // std::string is automatically deleted
+/**
+ * A StringView class which doesn't own its string
+ */
+class StringView: public String {
+public:
+    StringView(char const * c);
+    StringView(char const * c, int len);
 
-    virtual std::string toString() override { return str; }
+    virtual ~StringView() {}
 
-    virtual std::string const & get() const override { return str; }
+    virtual char const * get() const override { return chars_; }
+    virtual uint32_t getHash() const override { return hash_; }
+    virtual int getLength() const override { return length_; }
 
-    std::string str;
+private:
+    char const * chars_;
+    int length_;
+    uint32_t hash_;
+};
+
+/**
+ * Garbage-Collected String Object
+*/
+class ObjString : public Obj, public String {
+public:
+    /**
+     * Copies string memory into this class
+     * NOTE: takeString not required! (only used in lox in concatenate)
+     */
+    ObjString(Vm * vm, char const * str);
+    ObjString(Vm * vm, char const * str, int length);
+
+    virtual ~ObjString();
+
+    // implment Obj interface
+    // virtual char * toString() override { return chars; }
+
+    // implement Key interface:
+    virtual char const * get() const override { return chars_; }
+    virtual uint32_t getHash() const override { return hash_; }
+    virtual int getLength() const override { return length_; }
+
+private:
+    char * chars_;  // null terminated sequence
+    int length_;
+    uint32_t hash_;
 };
 
 // predeclare Vm
@@ -38,9 +78,7 @@ public:
     InternedStringSet();
     virtual ~InternedStringSet();
 
-    ObjString * find(std::string s) const;  // TODO change to char const *
-
-    ObjString * add(Vm * vm, std::string s);  // TODO change to char const *
+    ObjString * add(Vm * vm, char const * chars, int len);
 
     void debug();
 

@@ -3,6 +3,7 @@
 #include <string>
 
 class Vm;
+class Str;
 
 /**
  * NOTE: if objects are all created via Vm, then we can do the register/deregister there
@@ -18,8 +19,8 @@ struct Obj {
 
     virtual ~Obj();
 
-    virtual std::string toString()=0;
-    
+    // virtual void toString(Str & str)=0;
+
     Type type;
     Obj * next;  // linked list of all objects
 

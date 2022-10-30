@@ -35,11 +35,10 @@ struct Value {
     inline bool isObjType(Obj::Type t) { return isObject() && as.obj->type == t; }
     inline bool isString() { return isObjType(Obj::Type::STRING); }
     inline ObjString * asObjString() { return (ObjString*)as.obj; }
-    inline std::string asString() { return asObjString()->str; }
-    inline char const * asCString() { return asString().c_str(); }
+    inline char const * asCString() { return asObjString()->get(); }
 
     // value methods
     bool equals(Value other);
-    std::string toString();
+    ObjString * toString(Vm * vm);
     void print();
 };
