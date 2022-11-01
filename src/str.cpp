@@ -27,7 +27,6 @@ ObjString * ObjString::newString(Vm * vm, char const * str) {
 
 ObjString * ObjString::newString(Vm * vm, char const * str, int length) {
     // is string already interned?
-    printf("!Find string: '%.*s'\n", length, str);
     ObjString * ostr = vm->getInternedStrings()->find(str, length);
     if( ostr != nullptr ) return ostr;  // already have that one!
 
@@ -55,7 +54,6 @@ ObjString * ObjString::newStringFmt(Vm * vm, const char* fmt, ...) {
     va_end(args);
 
     // is string already interned?
-    printf("!Find string: '%s'\n", chars);
     ObjString * ostr = vm->getInternedStrings()->find(chars, len);
     if( ostr != nullptr ) return ostr;  // already have that one!
 
@@ -74,7 +72,6 @@ ObjString * ObjString::concatenate(Vm * vm, ObjString * a, ObjString * b) {
     chars[len] = '\0';
 
     // is string already interned?
-    printf("!Find string: '%s'\n", chars);
     ObjString * ostr = vm->getInternedStrings()->find(chars, len);
     if( ostr != nullptr ) return ostr;  // already have that one!
 
@@ -87,10 +84,8 @@ ObjString::ObjString(Vm * vm, char const * chars, int length): Obj(vm, Obj::Type
     length_ = length;
     hash_ = calcHash_(chars_, length_);
 
-    printf("!Adding a new string: '%s', %i, %u\n", chars_, length_, hash_);
     // Add to interned set
     vm->getInternedStrings()->add(this);
-    printf("!Made new string\n");
 }
 
 ObjString::~ObjString() {
@@ -102,8 +97,6 @@ ObjString::~ObjString() {
  */
 struct StringHash {
     std::size_t operator()(String const * key) const {
-        printf("Get hash for %p [%i]'%.*s': %u\n",
-            key, key->type(), key->getLength(), key->get(), key->getHash());
         return key->getHash();
     }
 };
@@ -113,12 +106,6 @@ struct StringHash {
  */
 struct StringEqual {
     bool operator()(String const * lhs, String const * rhs) const {
-        printf("Compare strings: [%i]'%.*s'==[%i]'%.*s', %i==%i, %i\n", 
-               lhs->type(), lhs->getLength(), lhs->get(), 
-               rhs->type(), rhs->getLength(), rhs->get(),
-               lhs->getLength(), rhs->getLength(), 
-               memcmp(lhs->get(), rhs->get(), lhs->getLength()));
-
         return (lhs->getLength() == rhs->getLength()) && 
                (memcmp(lhs->get(), rhs->get(), lhs->getLength()) == 0);
     }

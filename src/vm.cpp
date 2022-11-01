@@ -34,7 +34,7 @@ void Vm::registerObj(Obj * obj){
 }
 
 void Vm::deregisterObj(Obj * obj){
-    printf("Deregister obj\n");
+    // TODO
 }
 
 void Vm::push(Value value) {
