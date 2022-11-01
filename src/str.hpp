@@ -4,6 +4,12 @@
 #include "object.hpp"
 #include <unordered_set>
 
+// predeclare Vm
+class Vm;
+
+// predeclare hidden helper class
+class InternedStringHashSet;
+
 /**
  * Interface for strings
  */
@@ -78,12 +84,6 @@ private:
     int length_;
     uint32_t hash_;
 };
-
-// predeclare Vm
-class Vm;
-
-// predeclare hidden helper class
-class InternedStringHashSet;
 
 /**
  * Set of strings. All elements must be ObjStrings
