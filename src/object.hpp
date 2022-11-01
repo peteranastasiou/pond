@@ -1,14 +1,13 @@
 #pragma once
 
-#include <string>
-
+// Predeclare references
 class Vm;
-class Str;
+class ObjString;
 
 /**
- * NOTE: if objects are all created via Vm, then we can do the register/deregister there
- * This may mean we don't need a custom "Lookup" class for strings, as they will be cheap objects again
-*/
+ * NOTE: if objects are all created via Vm, then we can do the register/deregister there, 
+ * this may simplify ObjStrings
+ */
 
 struct Obj {
     enum Type {
@@ -19,7 +18,8 @@ struct Obj {
 
     virtual ~Obj();
 
-    // virtual void toString(Str & str)=0;
+    virtual ObjString * toString() = 0;
+    virtual void print() = 0;
 
     Type type;
     Obj * next;  // linked list of all objects

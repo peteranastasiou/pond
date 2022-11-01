@@ -1,6 +1,5 @@
 
 #include "value.hpp"
-#include "util.hpp"
 
 #include <stdio.h>
 
@@ -24,14 +23,20 @@ bool Value::equals(Value other) {
 
 ObjString * Value::toString(Vm * vm) {
     switch( type ){
-        case NIL:     return new ObjString(vm, "nil");
-        case BOOL:    return as.boolean ? "true" : "false";
-        case NUMBER:  return util::format("%g", as.number);
+        case NIL:     return ObjString::newString(vm, "nil");
+        case BOOL:    return ObjString::newString(vm, as.boolean ? "true" : "false");
+        case NUMBER:  return ObjString::newStringFmt(vm, "%g", as.number);
         case OBJECT:  return as.obj->toString();
-        default:      return "???";
+        default:      return ObjString::newString(vm, "???");
     }
 }
 
 void Value::print() {
-    printf("%s", toString().c_str());
+    switch( type ){
+        case NIL:     printf("nil"); return;
+        case BOOL:    printf(as.boolean ? "true" : "false"); return;
+        case NUMBER:  printf("%g", as.number); return;
+        case OBJECT:  as.obj->print(); return;
+        default:      printf("???");
+    }
 }

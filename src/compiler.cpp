@@ -189,7 +189,7 @@ void Compiler::number_() {
 }
 
 void Compiler::string_() {
-    ObjString * str = vm_->addString(previousToken_.start+1, previousToken_.length-2);
+    ObjString * str = ObjString::newString(vm_, previousToken_.start+1, previousToken_.length-2);
     emitConstant_(Value::object(str));
 }
 

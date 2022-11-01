@@ -37,22 +37,6 @@ void Vm::deregisterObj(Obj * obj){
     printf("Deregister obj\n");
 }
 
-ObjString * Vm::addString(char const * str, int len){
-    // Elevate to std::string
-    std::string s(str, str+len);
-    return addString(s);
-}
-
-ObjString * Vm::addString(std::string str){
-    // See if string already exists
-    ObjString * ostr = internedStrings_.find(str);
-    if( ostr != nullptr ) return ostr;  // already exists!
-
-    // Not in the set - create a new memory managed object:
-    ostr = internedStrings_.add(this, str);
-    return ostr;
-}
-
 void Vm::push(Value value) {
     *stackTop_ = value;
     stackTop_++;
@@ -101,9 +85,9 @@ bool Vm::isTruthy_(Value value) {
 
 void Vm::concatenate_() {
     Value bValue = pop();
-    std::string b = bValue.toString();
-    std::string a = pop().asString();
-    push( Value::object(addString(a + b)) );
+    ObjString * b = bValue.toString(this);
+    ObjString * a = pop().asObjString();
+    push( Value::object(ObjString::concatenate(this, a, b)) );
 }
 
 InterpretResult Vm::run_() {

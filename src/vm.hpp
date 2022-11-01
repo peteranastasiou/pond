@@ -28,9 +28,8 @@ public:
     void registerObj(Obj * obj);
     void deregisterObj(Obj * obj);
 
-    // intern string
-    ObjString * addString(char const * str, int len);
-    ObjString * addString(std::string str);
+    // intern string helper
+    InternedStringSet * getInternedStrings(){ return &internedStrings_; }
 
 private:
     InterpretResult run_();

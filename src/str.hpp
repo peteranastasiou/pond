@@ -13,6 +13,7 @@ public:
     virtual char const * get() const = 0;
     virtual uint32_t getHash() const = 0;
     virtual int getLength() const = 0;
+    virtual int type() const = 0;
 };
 
 /**
@@ -28,6 +29,7 @@ public:
     virtual char const * get() const override { return chars_; }
     virtual uint32_t getHash() const override { return hash_; }
     virtual int getLength() const override { return length_; }
+    virtual int type() const override { return 0; };
 
 private:
     char const * chars_;
@@ -41,24 +43,38 @@ private:
 class ObjString : public Obj, public String {
 public:
     /**
-     * Copies string memory into this class
-     * NOTE: takeString not required! (only used in lox in concatenate)
+     * Constructor helpers - copies string memory into this class
      */
-    ObjString(Vm * vm, char const * str);
-    ObjString(Vm * vm, char const * str, int length);
+    static ObjString * newString(Vm * vm, char const * str);
+    static ObjString * newString(Vm * vm, char const * str, int length);
+
+    /**
+     * Constructor helper to make a new formatted string
+     */
+    static ObjString * newStringFmt(Vm * vm, char const * format, ...);
+
+    /**
+     * Constructor helper to make a string from two other strings
+     */
+    static ObjString * concatenate(Vm * vm, ObjString * a, ObjString * b);
 
     virtual ~ObjString();
 
-    // implment Obj interface
-    // virtual char * toString() override { return chars; }
+    // implment Obj interface (trivial for strings)
+    virtual ObjString * toString() override { return this; }
+    virtual void print() override { printf("%s", chars_); }
 
-    // implement Key interface:
+    // implement String interface:
     virtual char const * get() const override { return chars_; }
     virtual uint32_t getHash() const override { return hash_; }
     virtual int getLength() const override { return length_; }
-
+    virtual int type() const override { return 1; };
 private:
-    char * chars_;  // null terminated sequence
+    // Private constructor: must construct with helper!
+    // Takes ownership of str
+    ObjString(Vm * vm, char const * str, int length);
+
+    char const * chars_;  // null terminated sequence
     int length_;
     uint32_t hash_;
 };
@@ -78,7 +94,8 @@ public:
     InternedStringSet();
     virtual ~InternedStringSet();
 
-    ObjString * add(Vm * vm, char const * chars, int len);
+    ObjString * find(char const * chars, int len);
+    void add(ObjString * ostr);
 
     void debug();
 
