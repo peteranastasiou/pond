@@ -105,13 +105,15 @@ InterpretResult Vm::run_() {
         v.print();
         printf("]\n");
     }
+    disasm.disassembleChunk(chunk_, "CHUNK");
+    printf("====\n");
 
 #endif
 
     for(;;) {
 
 #ifdef DEBUG_TRACE_EXECUTION
-        printf("stack: ");
+        printf("          stack: ");
         for( Value * slot = stack_; slot < stackTop_; slot++ ){
             printf("[ ");
             slot->print();
@@ -199,8 +201,8 @@ void Vm::runtimeError_(const char* format, ...) {
     va_end(args);
     fputs("\n", stderr);
 
-    size_t instruction = ip_ - chunk_->getCode() - 1;
-    int line = 0;  // TODO decypher line number!
+    int offset = (int)(ip_ - chunk_->getCode() - 1);
+    int line = chunk_->getLineNumber(offset);
     fprintf(stderr, "[line %d] in script\n", line);
     resetStack_();
 }

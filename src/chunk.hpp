@@ -45,6 +45,9 @@ public:
 
     // append to bytecode array
     void write(uint8_t byte, uint16_t line);
+    
+    // Get a line number corresponding to position in bytecode array
+    uint16_t getLineNumber(int offset);
 
     // Get the length of the bytecode array
     int count();
@@ -64,7 +67,7 @@ public:
 
 private:
     std::vector<uint8_t> code;
-    std::vector<LineNum> lines;         // line numbers corresponding to bytecode array
+    std::vector<uint16_t> lines;    // line numbers corresponding to bytecode array
     std::vector<Value> constants;
 
     // Disassembler needs access within the chunk:

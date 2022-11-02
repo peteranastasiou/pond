@@ -18,16 +18,12 @@ void Chunk::write(uint8_t byte, uint16_t line) {
         exit(1);
     }
     code.push_back(byte);
-    
-    if( lines.size() == 0
-        || lines.back().line != line
-        || lines.back().count == 0xFF ){    // TODO test > 256 bytecode bytes on 1 line
-        // new line
-        lines.push_back({line, 1});
-    }else{
-        // same line
-        lines.back().count ++;
-    }
+    lines.push_back(line);
+}
+
+uint16_t Chunk::getLineNumber(int offset) {
+    if( offset < 0 || offset >= (int)lines.size() ) return -1;  // should never happen
+    return lines[offset];
 }
 
 int Chunk::count() {

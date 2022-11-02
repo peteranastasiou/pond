@@ -14,24 +14,16 @@ Dissassembler::~Dissassembler(){
 void Dissassembler::disassembleChunk(Chunk * chunk, char const * name){
     printf("== %s ==\n", name);
 
-    // first line number
-    int lineIdx = 0;
-    int lineInstrCount = chunk->lines[lineIdx].count; // number of bytecode bytes per line
-
-    for (int offset = 0; offset < chunk->count();) {
-        int incr = disassembleInstruction_(chunk, offset, chunk->lines[lineIdx].line);
+    for( int offset = 0; offset < chunk->count(); ) {
+        int line = chunk->getLineNumber(offset);
+        int incr = disassembleInstruction_(chunk, offset, line);
         offset += incr;
-        if( lineInstrCount -= incr <= 0 ){
-            // new line:
-            lineIdx ++;
-            lineInstrCount = chunk->lines[lineIdx].count;
-        }
     }
 }
 
 int Dissassembler::disassembleInstruction(Chunk * chunk, int offset){
-    // TODO decypher the line number
-    return disassembleInstruction_(chunk, offset, 0);
+    int line = chunk->getLineNumber(offset);
+    return disassembleInstruction_(chunk, offset, line);
 }
 
 int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
