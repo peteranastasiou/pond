@@ -37,6 +37,7 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
         case OpCode::TRUE:          return simpleInstruction_("TRUE");
         case OpCode::FALSE:         return simpleInstruction_("FALSE");
         case OpCode::ADD:           return simpleInstruction_("ADD");
+        case OpCode::POP:           return simpleInstruction_("POP");
         case OpCode::EQUAL:         return simpleInstruction_("EQUAL"); 
         case OpCode::NOT_EQUAL:     return simpleInstruction_("NOT_EQUAL");     
         case OpCode::GREATER:       return simpleInstruction_("GREATER");   
@@ -48,6 +49,7 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
         case OpCode::DIVIDE:        return simpleInstruction_("DIVIDE");
         case OpCode::NEGATE:        return simpleInstruction_("NEGATE");
         case OpCode::NOT:           return simpleInstruction_("NOT");
+        case OpCode::PRINT:         return simpleInstruction_("PRINT");
         case OpCode::RETURN:        return simpleInstruction_("RETURN");
         default:
             printf("Unknown opcode %i\n", instr);

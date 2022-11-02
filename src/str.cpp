@@ -45,7 +45,6 @@ ObjString * ObjString::newStringFmt(Vm * vm, const char* fmt, ...) {
     // Work out buffer size by doing a dry run: 
     va_start(args, fmt);
     int len = vsnprintf(nullptr, 0, fmt, args);
-    printf("fmt len is %i\n", len);
     va_end(args);
 
     // Now do the real thing:

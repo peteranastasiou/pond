@@ -45,11 +45,14 @@ private:
     // parser helpers:
     void advance_();
     void consume_(Token::Type type, const char* message);
+    bool match_(Token::Type type);
     Chunk * currentChunk_();
     ParseRule const * getRule_(Token::Type type);
 
     // parsing different types of things:
     void expression_();
+    void declaration_();
+    void statement_();
     void parse_(Precedence precedence);  // parse everything with >= precendence
     void number_();
     void string_();

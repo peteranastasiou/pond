@@ -81,7 +81,7 @@ private:
     ObjString(Vm * vm, char const * str, int length);
 
     char const * chars_;  // null terminated sequence
-    int length_;
+    int length_;          // number of characters, NOT including null terminator
     uint32_t hash_;
 };
 

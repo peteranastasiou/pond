@@ -134,6 +134,7 @@ InterpretResult Vm::run_() {
             case OpCode::NIL: push(Value::nil()); break;
             case OpCode::TRUE: push(Value::boolean(true)); break;
             case OpCode::FALSE: push(Value::boolean(false)); break;
+            case OpCode::POP: pop(); break;
             case OpCode::EQUAL: {
                 push(Value::boolean( pop().equals(pop()) ));
                 break;
@@ -181,9 +182,12 @@ InterpretResult Vm::run_() {
                 push(Value::boolean(!isTruthy_(pop())));
                 break;
             }
-            case OpCode::RETURN:{
+            case OpCode::PRINT:{
                 pop().print();
                 printf("\n");
+                break;
+            }
+            case OpCode::RETURN:{
                 return InterpretResult::OK;
             }
             default:{

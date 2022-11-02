@@ -13,6 +13,7 @@ enum {
     NIL,            // Push nil to the stack
     TRUE,           // Push true to the stack
     FALSE,          // Push false to the stack
+    POP,            // Pop 1 value from the stack
     // Binary operators: take two values from the stack and push one:
     EQUAL,
     NOT_EQUAL,
@@ -28,6 +29,7 @@ enum {
     NEGATE,
     NOT,
     // Control flow:
+    PRINT,
     RETURN,
 };
 }

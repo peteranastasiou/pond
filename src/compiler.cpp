@@ -20,9 +20,12 @@ bool Compiler::compile(char const * source, Chunk & chunk) {
     hadError_ = false;
     panicMode_ = false;
 
-    advance_();
-    expression_();
-    consume_(Token::END, "Expect end of expression");
+    advance_();  // get the first token
+    
+    // compile declarations until we hit the end
+    while( !match_(Token::END) ){
+        declaration_();
+    }
 
     endCompilation_();
     return !hadError_;
@@ -57,6 +60,16 @@ void Compiler::consume_(Token::Type type, const char* message) {
         return;
     }
     errorAtCurrent_(message);
+}
+
+bool Compiler::match_(Token::Type type) {
+    // Like consume_ but return bool instead of throwing error
+    if( currentToken_.type == type ){
+        // only advance if token is correct
+        advance_();
+        return true;
+    }
+    return false;
 }
 
 Chunk * Compiler::currentChunk_() {
@@ -108,6 +121,25 @@ void Compiler::expression_() {
     parse_(Precedence::ASSIGNMENT);
 }
 
+void Compiler::declaration_() {
+    // TODO variable declarations
+    statement_();
+}
+
+void Compiler::statement_() {
+    if( match_(Token::PRINT) ){
+        // print statement takes a single value:
+        expression_();
+        consume_(Token::SEMICOLON, "Expected ';' after statement.");
+        emitByte_(OpCode::PRINT);
+    }else{
+        // expression statement:
+        expression_();
+        consume_(Token::SEMICOLON, "Expected ';' after statement.");
+        emitByte_(OpCode::POP); // discard the result
+    }
+}
+
 void Compiler::parse_(Precedence precedence) {
     // Next token
     advance_();
@@ -115,7 +147,7 @@ void Compiler::parse_(Precedence precedence) {
     // Perform prefix rule of the token first:
     auto prefixRule = getRule_(previousToken_.type)->prefix;
     if( prefixRule == NULL ){
-        errorAtPrevious_("Expect expression");
+        errorAtPrevious_("Expected expression");
         return;
     }
     prefixRule();
@@ -138,7 +170,7 @@ void Compiler::grouping_() {
     expression_();
 
     // consume the closing brace:
-    consume_(Token::RIGHT_PAREN, "Expect ')' after expression");
+    consume_(Token::RIGHT_PAREN, "Expected ')' after expression");
 }
 
 void Compiler::unary_() {
