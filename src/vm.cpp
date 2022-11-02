@@ -105,7 +105,7 @@ InterpretResult Vm::run_() {
         v.print();
         printf("]\n");
     }
-    disasm.disassembleChunk(chunk_, "CHUNK");
+    // disasm.disassembleChunk(chunk_, "CHUNK");
     printf("====\n");
 
 #endif
