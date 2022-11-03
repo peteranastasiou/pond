@@ -2,13 +2,12 @@
 #pragma once
 
 #include "object.hpp"
-#include <unordered_set>
+
+#include <stdio.h>
+#include <stdint.h>
 
 // predeclare Vm
 class Vm;
-
-// predeclare hidden helper class
-class InternedStringHashSet;
 
 /**
  * Interface for strings
@@ -83,23 +82,4 @@ private:
     char const * chars_;  // null terminated sequence
     int length_;          // number of characters, NOT including null terminator
     uint32_t hash_;
-};
-
-/**
- * Set of strings. All elements must be ObjStrings
- * Key interface is used so we can do cheap lookups
- */
-class InternedStringSet {
-public:
-    InternedStringSet();
-    virtual ~InternedStringSet();
-
-    ObjString * find(char const * chars, int len);
-    void add(ObjString * ostr);
-
-    void debug();
-
-private:
-    // Pointer to implementation, to hidden helper class:
-    InternedStringHashSet * hashSet_;
 };

@@ -42,8 +42,15 @@ endif
 
 # Defines
 DEFINES = 
+
+# Enable debug messages:
 ifeq ($(DEBUG_TRACE_EXECUTION), 1)
 	DEFINES += -DDEBUG_TRACE_EXECUTION
+endif
+
+# Disable assert() calls:
+ifeq ($(DEBUG), 0)
+	DEFINES += -DNDEBUG
 endif
 
 LIBS = -lreadline

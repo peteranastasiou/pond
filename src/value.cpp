@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-bool Value::equals(Value other) {
+bool Value::equals(Value other) const {
     if( type != other.type ) return false;
 
     switch( type ){
@@ -31,7 +31,7 @@ ObjString * Value::toString(Vm * vm) {
     }
 }
 
-void Value::print() {
+void Value::print() const {
     switch( type ){
         case NIL:     printf("nil"); return;
         case BOOL:    printf(as.boolean ? "true" : "false"); return;

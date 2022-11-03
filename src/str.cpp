@@ -92,67 +92,6 @@ ObjString::~ObjString() {
     delete[] chars_;
 }
 
-/**
- * Hash value of a String
- */
-struct StringHash {
-    std::size_t operator()(String const * key) const {
-        return key->getHash();
-    }
-};
-
-/**
- * Compare two Strings
- */
-struct StringEqual {
-    bool operator()(String const * lhs, String const * rhs) const {
-        return (lhs->getLength() == rhs->getLength()) && 
-               (memcmp(lhs->get(), rhs->get(), lhs->getLength()) == 0);
-    }
-};
-
-/**
- * Hidden helper class
-*/
-class InternedStringHashSet : public std::unordered_set<String*, StringHash, StringEqual> {
-public:
-    InternedStringHashSet() {}
-    virtual ~InternedStringHashSet() {}
-};
-
-/**
- * InternedStringSet class def:
-*/
-
-InternedStringSet::InternedStringSet() {
-    hashSet_ = new InternedStringHashSet();
-}
-
-InternedStringSet::~InternedStringSet() {
-    delete hashSet_;
-}
-
-ObjString * InternedStringSet::find(char const * chars, int len) {
-    // Search if string is already interned:
-    StringView lookup(chars, len);
-    auto key = hashSet_->find(&lookup);
-    if( key == hashSet_->end() )  return nullptr;  // not found
-    // Found it:
-    // Must be an ObjString because thats all we ever add to the set
-    return (ObjString*) *key;
-}
-
-void InternedStringSet::add(ObjString * ostr) {
-    hashSet_->emplace(ostr);
-}
-
-void InternedStringSet::debug() {
-    printf("Interned string set:\n");
-    for( auto & it : *hashSet_ ){
-        printf("  %p: 0x%8x %3i '%s'\n", (ObjString*) it, it->getHash(), it->getLength(), it->get());
-    }
-}
-
 static uint32_t calcHash_(char const * str, int length) {
     uint32_t hash = 2166136261u;
     for (int i = 0; i < length; i++) {

@@ -26,19 +26,19 @@ struct Value {
     static inline Value object(Obj * o) { return (Value){OBJECT, {.obj = o}}; }
 
     // Helpers for value types
-    inline bool isNil() { return type == NIL; }
-    inline bool isBoolean() { return type == BOOL; }
-    inline bool isNumber() { return type == NUMBER; }
-    inline bool isObject() { return type == OBJECT; }
+    inline bool isNil() const { return type == NIL; }
+    inline bool isBoolean() const { return type == BOOL; }
+    inline bool isNumber() const { return type == NUMBER; }
+    inline bool isObject() const { return type == OBJECT; }
 
     // Helpers for object types
-    inline bool isObjType(Obj::Type t) { return isObject() && as.obj->type == t; }
-    inline bool isString() { return isObjType(Obj::Type::STRING); }
-    inline ObjString * asObjString() { return (ObjString*)as.obj; }
-    inline char const * asCString() { return asObjString()->get(); }
+    inline bool isObjType(Obj::Type t) const { return isObject() && as.obj->type == t; }
+    inline bool isString() const { return isObjType(Obj::Type::STRING); }
+    inline ObjString * asObjString() const { return (ObjString*)as.obj; }
+    inline char const * asCString() const { return asObjString()->get(); }
 
     // value methods
-    bool equals(Value other);
+    bool equals(Value other) const;
     ObjString * toString(Vm * vm);
-    void print();
+    void print() const;
 };

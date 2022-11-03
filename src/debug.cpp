@@ -38,6 +38,7 @@ int Dissassembler::disassembleInstruction_(Chunk * chunk, int offset, int line){
         case OpCode::FALSE:         return simpleInstruction_("FALSE");
         case OpCode::ADD:           return simpleInstruction_("ADD");
         case OpCode::POP:           return simpleInstruction_("POP");
+        case OpCode::DEFINE_GLOBAL: return constantInstruction_("DEFINE_GLOBAL", chunk, offset);
         case OpCode::EQUAL:         return simpleInstruction_("EQUAL"); 
         case OpCode::NOT_EQUAL:     return simpleInstruction_("NOT_EQUAL");     
         case OpCode::GREATER:       return simpleInstruction_("GREATER");   

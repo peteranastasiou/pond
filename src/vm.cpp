@@ -3,6 +3,7 @@
 #include "debug.hpp"
 #include "compiler.hpp"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -90,9 +91,21 @@ void Vm::concatenate_() {
     push( Value::object(ObjString::concatenate(this, a, b)) );
 }
 
+Value Vm::readConstant_() {
+    // look up constant from bytecode reference
+    return chunk_->getConstant(readByte_());
+}
+
+ObjString * Vm::readString_() {
+    // look up constant from bytecode and cast to string:
+    Value constant = readConstant_();
+    assert(constant.isString());
+    return constant.asObjString();
+}
+
 InterpretResult Vm::run_() {
 #ifdef DEBUG_TRACE_EXECUTION
-      Dissassembler disasm;  
+    Dissassembler disasm;  
 
     internedStrings_.debug();
     debugObjectLinkedList(objects_);
@@ -105,7 +118,8 @@ InterpretResult Vm::run_() {
         v.print();
         printf("]\n");
     }
-    // disasm.disassembleChunk(chunk_, "CHUNK");
+    printf("Globals:\n");
+    globals_.debug();
     printf("====\n");
 
 #endif
@@ -127,14 +141,19 @@ InterpretResult Vm::run_() {
         uint8_t instr = readByte_();
         switch( instr ){
             case OpCode::CONSTANT:{
-                Value constant = chunk_->getConstant(readByte_());
-                push(constant);
+                push(readConstant_());
                 break;
             }
             case OpCode::NIL: push(Value::nil()); break;
             case OpCode::TRUE: push(Value::boolean(true)); break;
             case OpCode::FALSE: push(Value::boolean(false)); break;
             case OpCode::POP: pop(); break;
+            case OpCode::DEFINE_GLOBAL: {
+                // NOTE: re-defining globals is allowed!
+                globals_.set(readString_(), peek(0));
+                pop(); // Note: lox has this late pop as `set` might trigger garbage collection
+                break;
+            }
             case OpCode::EQUAL: {
                 push(Value::boolean( pop().equals(pop()) ));
                 break;

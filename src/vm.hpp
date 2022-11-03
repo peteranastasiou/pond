@@ -3,7 +3,9 @@
 #include "chunk.hpp"
 #include "value.hpp"
 #include "object.hpp"
-#include "str.hpp"
+#include "table.hpp"
+
+#include <unordered_map>
 
 enum class InterpretResult {
     OK,
@@ -29,7 +31,7 @@ public:
     void deregisterObj(Obj * obj);
 
     // intern string helper
-    InternedStringSet * getInternedStrings(){ return &internedStrings_; }
+    StringSet * getInternedStrings(){ return &internedStrings_; }
 
 private:
     InterpretResult run_();
@@ -39,6 +41,8 @@ private:
     bool isTruthy_(Value value);
     void concatenate_();
     void runtimeError_(const char* format, ...);
+    Value readConstant_();
+    ObjString * readString_();
     void freeObjects_();
 
     static int const STACK_MAX = 256;
@@ -48,5 +52,6 @@ private:
     Value stack_[STACK_MAX];
     Value * stackTop_;  // points past the last value in the stack
     Obj * objects_;     // linked list of objects
-    InternedStringSet internedStrings_;
+    StringSet internedStrings_;
+    HashMap globals_; 
 };
