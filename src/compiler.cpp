@@ -124,6 +124,9 @@ void Compiler::expression_() {
 void Compiler::declaration_() {
     // TODO variable declarations
     statement_();
+
+    // End of a statement is a good place to re-sync the parser if its panicking
+    if( panicMode_ ) synchronise_();
 }
 
 void Compiler::statement_() {
@@ -137,6 +140,30 @@ void Compiler::statement_() {
         expression_();
         consume_(Token::SEMICOLON, "Expected ';' after statement.");
         emitByte_(OpCode::POP); // discard the result
+    }
+}
+
+void Compiler::synchronise_() {
+    // try and find a boundary which seems like a good sync point
+    panicMode_ = false;
+    while( currentToken_.type != Token::END ){
+        // stop if the previous token looks like the end of a declaration/statement:
+        if( previousToken_.type == Token::SEMICOLON ) return;
+
+        // the following tokens look like the start of a new declaration/statement:
+        switch( currentToken_.type ){
+            case Token::FN:
+            case Token::VAR:
+            case Token::FOR:
+            case Token::IF:
+            case Token::WHILE:
+            case Token::PRINT:
+            case Token::RETURN:
+                return;
+
+            default: break;  // keep spinning
+        }
+        advance_();
     }
 }
 

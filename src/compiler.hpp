@@ -53,6 +53,7 @@ private:
     void expression_();
     void declaration_();
     void statement_();
+    void synchronise_();
     void parse_(Precedence precedence);  // parse everything with >= precendence
     void number_();
     void string_();
