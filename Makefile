@@ -46,12 +46,14 @@ ifeq ($(DEBUG_TRACE_EXECUTION), 1)
 	DEFINES += -DDEBUG_TRACE_EXECUTION
 endif
 
+LIBS = -lreadline
+
 all: $(TARGET)
 
 # Link
 $(TARGET): $(OBJECTS)
 	@$(MKDIR_BIN)
-	$(CC) -o $@ $(OBJECTS) $(LDFLAGS)
+	$(CC) -o $@ $(OBJECTS) $(LDFLAGS) $(LIBS)
 
 # Compile sources
 build/%.o: src/%.cpp

@@ -7,22 +7,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <iostream>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 
 static void repl() {
     Vm vm;
-    
-    for(;;){
-        std::cout << "> ";
-        std::string str;
-        std::getline(std::cin, str);
 
-        if( str == "exit" ){
-            return;
+    // TODO tab completion!
+    // rl_completion_matches = autocomplete;  // ref https://eli.thegreenplace.net/2016/basics-of-using-the-readline-library/
+
+    for( ;; ){
+        char * line = readline("> ");
+        if( line == nullptr ) return;  // Ctrl C or D
+
+        if( strlen(line) > 0 ){
+            add_history(line);
         }
+        
+        vm.interpret(line);
 
-        vm.interpret(str.c_str());
+        free(line);
     }
 }
 
