@@ -197,7 +197,9 @@ void Compiler::parse_(Precedence precedence) {
         errorAtPrevious_("Expected expression");
         return;
     }
-    prefixRule();
+    // Check whether assignment is possible and pass down to the rule (if it cares)
+    bool canAssign = precedence <= Precedence::ASSIGNMENT;
+    prefixRule(canAssign);
 
     // Perforce infix rules on tokens from left to right:
     for( ;; ){
@@ -208,7 +210,11 @@ void Compiler::parse_(Precedence precedence) {
         }
         // Consume and then compile the operator:
         advance_();
-        rule->infix();  // Can't be NULL as Precedence > NONE (refer getRule_ table)
+        rule->infix(canAssign);  // Can't be NULL as Precedence > NONE (refer getRule_ table)
+    }
+    // handle a case where assignment is badly placed, otherwise this isn't handled!
+    if( canAssign && match_(Token::EQUAL) ){
+        errorAtPrevious_("Invalid assignment target.");
     }
 }
 
@@ -284,17 +290,28 @@ void Compiler::string_() {
     emitConstant_(Value::object(str));
 }
 
-void Compiler::variable_() {
-    emitVariable_(previousToken_);
+void Compiler::variable_(bool canAssign) {
+    namedVariable_(previousToken_, canAssign);
 }
 
-void Compiler::emitVariable_(Token token) {
+void Compiler::namedVariable_(Token token, bool canAssign) {
     uint8_t global = makeIdentifierConstant_(token);
-    emitBytes_(OpCode::GET_GLOBAL, global);
+
+    // identify whether we are setting or getting a variable:
+    if( canAssign && match_(Token::EQUAL) ){
+        // setting
+        expression_();  // the value to set
+        emitBytes_(OpCode::SET_GLOBAL, global);
+    }else{
+        // getting
+        emitBytes_(OpCode::GET_GLOBAL, global);
+    }
 }
 
 
-#define RULE(fn) [this](){ this->fn(); }
+// Macros to define lambdas to call each function with or without parameter `canAssign`
+#define ASSIGNMENT_RULE(fn) [this](bool canAssign){ this->fn(canAssign); }
+#define RULE(fn) [this](bool canAssign){ (void) canAssign; this->fn(); }
 
 ParseRule const * Compiler::getRule_(Token::Type type) {
     static const ParseRule rules[] = {
@@ -317,7 +334,7 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::GREATER_EQUAL] = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::LESS]          = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::LESS_EQUAL]    = {NULL,            RULE(binary_), Precedence::COMPARISON},
-        [Token::IDENTIFIER]    = {RULE(variable_), NULL,          Precedence::NONE},
+        [Token::IDENTIFIER]    = {ASSIGNMENT_RULE(variable_), NULL,  Precedence::NONE},
         [Token::STRING]        = {RULE(string_),   NULL,          Precedence::NONE},
         [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
         [Token::AND]           = {NULL,            NULL,          Precedence::NONE},

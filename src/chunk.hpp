@@ -16,6 +16,7 @@ enum {
     POP,            // Pop 1 value from the stack
     DEFINE_GLOBAL,  // Define a global variable
     GET_GLOBAL,     // Push the value of a global to the stack
+    SET_GLOBAL,     // Set the value of a variable
     // Binary operators: take two values from the stack and push one:
     EQUAL,
     NOT_EQUAL,

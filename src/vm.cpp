@@ -165,6 +165,17 @@ InterpretResult Vm::run_() {
                 push(value);
                 break;
             }
+            case OpCode::SET_GLOBAL: {
+                ObjString * name = readString_();
+                if( globals_.set(name, peek(0)) ){
+                    // Didn't expect this to be a new variable!
+                    globals_.remove(name); // undo the operation
+                    runtimeError_("Undefined variable '%s'.", name->get());
+                    return InterpretResult::RUNTIME_ERR;
+                }
+                // don't pop: the assignment can be used in an expression
+                break;
+            }
             case OpCode::EQUAL: {
                 push(Value::boolean( pop().equals(pop()) ));
                 break;
