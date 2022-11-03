@@ -215,12 +215,12 @@ void Compiler::parse_(Precedence precedence) {
 uint8_t Compiler::parseVariable_(const char * errorMsg) {
     consume_( Token::IDENTIFIER, errorMsg );
 
-    return makeIdentifierConstant_(&previousToken_);
+    return makeIdentifierConstant_(previousToken_);
 }
 
-uint8_t Compiler::makeIdentifierConstant_(Token * name) {
+uint8_t Compiler::makeIdentifierConstant_(Token & name) {
     return makeConstant_(Value::object(
-        ObjString::newString(vm_, name->start, name->length)
+        ObjString::newString(vm_, name.start, name.length)
     ));
 }
 
@@ -284,6 +284,16 @@ void Compiler::string_() {
     emitConstant_(Value::object(str));
 }
 
+void Compiler::variable_() {
+    emitVariable_(previousToken_);
+}
+
+void Compiler::emitVariable_(Token token) {
+    uint8_t global = makeIdentifierConstant_(token);
+    emitBytes_(OpCode::GET_GLOBAL, global);
+}
+
+
 #define RULE(fn) [this](){ this->fn(); }
 
 ParseRule const * Compiler::getRule_(Token::Type type) {
@@ -307,7 +317,7 @@ ParseRule const * Compiler::getRule_(Token::Type type) {
         [Token::GREATER_EQUAL] = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::LESS]          = {NULL,            RULE(binary_), Precedence::COMPARISON},
         [Token::LESS_EQUAL]    = {NULL,            RULE(binary_), Precedence::COMPARISON},
-        [Token::IDENTIFIER]    = {NULL,            NULL,          Precedence::NONE},
+        [Token::IDENTIFIER]    = {RULE(variable_), NULL,          Precedence::NONE},
         [Token::STRING]        = {RULE(string_),   NULL,          Precedence::NONE},
         [Token::NUMBER]        = {RULE(number_),   NULL,          Precedence::NONE},
         [Token::AND]           = {NULL,            NULL,          Precedence::NONE},

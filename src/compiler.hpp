@@ -60,6 +60,7 @@ private:
     uint8_t parseVariable_(const char * errorMsg);
     void number_();
     void string_();
+    void variable_();
     void unary_();
     void binary_();
     void grouping_();  // parentheses in expressions
@@ -74,8 +75,9 @@ private:
     void emitNil_();
     void emitReturn_();
     void emitConstant_(Value value);
+    void emitVariable_(Token token);
     uint8_t makeConstant_(Value value);
-    uint8_t makeIdentifierConstant_(Token * name);
+    uint8_t makeIdentifierConstant_(Token & name);
 
     // error production:
     void errorAtCurrent_(const char* message);

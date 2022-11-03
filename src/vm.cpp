@@ -150,8 +150,19 @@ InterpretResult Vm::run_() {
             case OpCode::POP: pop(); break;
             case OpCode::DEFINE_GLOBAL: {
                 // NOTE: re-defining globals is allowed!
-                globals_.set(readString_(), peek(0));
+                ObjString * name = readString_();
+                globals_.set(name, peek(0));
                 pop(); // Note: lox has this late pop as `set` might trigger garbage collection
+                break;
+            }
+            case OpCode::GET_GLOBAL: {
+                ObjString * name = readString_();
+                Value value;
+                if( !globals_.get(name, value) ){
+                    runtimeError_("Undefined variable '%s'.", name->get());
+                    return InterpretResult::RUNTIME_ERR;
+                }
+                push(value);
                 break;
             }
             case OpCode::EQUAL: {
