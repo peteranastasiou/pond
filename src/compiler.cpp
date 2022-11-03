@@ -122,11 +122,31 @@ void Compiler::expression_() {
 }
 
 void Compiler::declaration_() {
-    // TODO variable declarations
-    statement_();
+    if( match_(Token::VAR) ){
+        varDeclaration_();
+    }else{
+        statement_();
+    }
 
     // End of a statement is a good place to re-sync the parser if its panicking
     if( panicMode_ ) synchronise_();
+}
+
+void Compiler::varDeclaration_() {
+    uint8_t global = parseVariable_("Expected variable name.");
+
+    // assigned an initial value?
+    if( match_(Token::EQUAL) ){
+        expression_();
+    }else{
+        emitByte_(OpCode::NIL); // default value is nil
+    }
+    consume_(Token::SEMICOLON, "Expected ';' after var declaration.");
+    defineVariable_(global);
+}
+
+void Compiler::defineVariable_(uint8_t global) {
+    emitBytes_(OpCode::DEFINE_GLOBAL, global);
 }
 
 void Compiler::statement_() {
@@ -190,6 +210,18 @@ void Compiler::parse_(Precedence precedence) {
         advance_();
         rule->infix();  // Can't be NULL as Precedence > NONE (refer getRule_ table)
     }
+}
+
+uint8_t Compiler::parseVariable_(const char * errorMsg) {
+    consume_( Token::IDENTIFIER, errorMsg );
+
+    return makeIdentifierConstant_(&previousToken_);
+}
+
+uint8_t Compiler::makeIdentifierConstant_(Token * name) {
+    return makeConstant_(Value::object(
+        ObjString::newString(vm_, name->start, name->length)
+    ));
 }
 
 void Compiler::grouping_() {

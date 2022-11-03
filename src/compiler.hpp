@@ -52,9 +52,12 @@ private:
     // parsing different types of things:
     void expression_();
     void declaration_();
+    void varDeclaration_();
+    void defineVariable_(uint8_t global);
     void statement_();
     void synchronise_();
-    void parse_(Precedence precedence);  // parse everything with >= precendence
+    void parse_(Precedence precedence);  // parse expressions with >= precendence
+    uint8_t parseVariable_(const char * errorMsg);
     void number_();
     void string_();
     void unary_();
@@ -72,6 +75,7 @@ private:
     void emitReturn_();
     void emitConstant_(Value value);
     uint8_t makeConstant_(Value value);
+    uint8_t makeIdentifierConstant_(Token * name);
 
     // error production:
     void errorAtCurrent_(const char* message);

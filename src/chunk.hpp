@@ -14,6 +14,7 @@ enum {
     TRUE,           // Push true to the stack
     FALSE,          // Push false to the stack
     POP,            // Pop 1 value from the stack
+    DEFINE_GLOBAL,  // Define a global variable
     // Binary operators: take two values from the stack and push one:
     EQUAL,
     NOT_EQUAL,
